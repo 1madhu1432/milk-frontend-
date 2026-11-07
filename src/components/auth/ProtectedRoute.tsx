@@ -23,10 +23,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     // 1. Customer Portal: Open directly with Customer session
     if (path.startsWith('/customer')) {
       if (!token || currentUser.role !== 'customer') {
+        const email = currentUser.email || 'customer@dailydairy.demo';
+        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Rajesh Reddy';
         const demoPayload = {
           userId: 'user-cust-01',
-          email: 'customer@dailydairy.demo',
-          name: 'Dairy Subscriber',
+          email,
+          name,
           role: 'CUSTOMER',
           tenantId: 'tenant-harish-dairy',
           exp: Math.floor(Date.now() / 1000) + 86400 * 30,
@@ -35,17 +37,19 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
         localStorage.setItem('milkerp_access_token', mockJwt);
         localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
-        login('customer', 'customer@dailydairy.demo', 'Dairy Subscriber', 'user-cust-01');
+        login('customer', email, name, 'user-cust-01');
       }
     }
 
     // 2. Delivery Rider Portal: Open directly with Delivery Staff session
     if (path.startsWith('/employee') || path.startsWith('/delivery')) {
       if (!token || currentUser.role !== 'employee') {
+        const email = currentUser.email || 'delivery@dailydairy.demo';
+        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Suresh Kumar Goud';
         const demoPayload = {
           userId: 'user-deliv-01',
-          email: 'delivery@dailydairy.demo',
-          name: 'Delivery Staff (Rider)',
+          email,
+          name,
           role: 'DELIVERY_BOY',
           tenantId: 'tenant-harish-dairy',
           exp: Math.floor(Date.now() / 1000) + 86400 * 30,
@@ -54,17 +58,19 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
         localStorage.setItem('milkerp_access_token', mockJwt);
         localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
-        login('employee', 'delivery@dailydairy.demo', 'Delivery Staff (Rider)', 'user-deliv-01');
+        login('employee', email, name, 'user-deliv-01');
       }
     }
 
     // 3. Admin Portal: Open directly with Admin session
     if (path.startsWith('/admin')) {
       if (!token || (currentUser.role !== 'admin' && currentUser.role !== 'super_admin')) {
+        const email = currentUser.email || 'admin@vallycrm.com';
+        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Vally Admin';
         const demoPayload = {
-          userId: 'user-admin-01',
-          email: 'admin@dailydairy.demo',
-          name: 'Dairy Admin Owner',
+          userId: 'user-admin-vally',
+          email,
+          name,
           role: 'ADMIN',
           tenantId: 'tenant-harish-dairy',
           exp: Math.floor(Date.now() / 1000) + 86400 * 30,
@@ -73,7 +79,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
         localStorage.setItem('milkerp_access_token', mockJwt);
         localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
-        login('admin', 'admin@dailydairy.demo', 'Dairy Admin Owner', 'user-admin-01');
+        login('admin', email, name, 'user-admin-vally');
       }
     }
   }, [path, token, currentUser.role, login]);

@@ -89,7 +89,12 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
     routes[1] ||
     routes[0];
 
-  const today = '2026-10-10';
+  const today = useMemo(() => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (deliveries.some(d => d.date === todayStr)) return todayStr;
+    if (deliveries.length > 0 && deliveries[0].date) return deliveries[0].date;
+    return todayStr;
+  }, [deliveries]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'PENDING' | 'DELIVERED' | 'MISSED'>('ALL');
 

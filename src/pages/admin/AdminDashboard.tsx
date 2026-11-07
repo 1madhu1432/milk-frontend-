@@ -60,7 +60,12 @@ export const AdminDashboard: React.FC = () => {
     settings,
   } = useDairy();
 
-  const [dateFilter, setDateFilter] = useState('2026-10-10');
+  const [dateFilter, setDateFilter] = useState(() => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (deliveries.some(d => d.date === todayStr)) return todayStr;
+    if (deliveries.length > 0 && deliveries[0].date) return deliveries[0].date;
+    return todayStr;
+  });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleRefresh = () => {
@@ -202,9 +207,8 @@ export const AdminDashboard: React.FC = () => {
 
             <button
               onClick={handleRefresh}
-              className={`p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all cursor-pointer shadow-xs ${
-                isRefreshing ? 'animate-spin text-emerald-400' : ''
-              }`}
+              className={`p-2.5 rounded-2xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all cursor-pointer shadow-xs ${isRefreshing ? 'animate-spin text-emerald-400' : ''
+                }`}
               title="Refresh Live Metrics"
             >
               <RefreshCw className="w-4 h-4" />
@@ -706,10 +710,10 @@ export const AdminDashboard: React.FC = () => {
                           d.status === 'Delivered'
                             ? 'green'
                             : d.status === 'Partially delivered'
-                            ? 'amber'
-                            : d.status === 'Scheduled'
-                            ? 'blue'
-                            : 'red'
+                              ? 'amber'
+                              : d.status === 'Scheduled'
+                                ? 'blue'
+                                : 'red'
                         }
                         size="sm"
                       >
@@ -774,8 +778,8 @@ export const AdminDashboard: React.FC = () => {
                           log.status === 'Delivered'
                             ? 'green'
                             : log.status === 'Sent'
-                            ? 'blue'
-                            : 'red'
+                              ? 'blue'
+                              : 'red'
                         }
                         size="sm"
                       >

@@ -248,6 +248,20 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
           )}
         </div>
 
+        {/* Test Sandbox Mode Banner */}
+        <div className="bg-amber-500/10 border-b border-amber-200 px-5 py-2 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2 text-amber-900 font-bold">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            </span>
+            <span>Razorpay Sandbox Mode Active</span>
+          </div>
+          <span className="font-mono text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-semibold">
+            {razorpay?.keyId || 'rzp_test_milkerp_dev_2026'}
+          </span>
+        </div>
+
         {/* STEP 1: CHECKOUT VIEW */}
         {step === 'checkout' && (
           <div>
@@ -397,6 +411,27 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                   </div>
                 </div>
 
+                {/* 1-Click Sandbox Test Auto-Approval */}
+                <div className="p-3.5 bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-200/80 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="text-left">
+                    <p className="text-xs font-black text-emerald-950 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>1-Click Sandbox Test Payment</span>
+                    </p>
+                    <p className="text-[11px] text-emerald-700">
+                      Simulates customer UPI confirmation via {selectedUpiApp.toUpperCase()} without needing a mobile device.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleStartPayment(`UPI Sandbox Simulator (${selectedUpiApp.toUpperCase()})`)}
+                    className="w-full sm:w-auto px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-black shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+                  >
+                    <span>⚡ Instant Test Approve</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
                 {/* Custom UPI VPA */}
                 <div className="space-y-1.5">
                   <label className="text-xs font-medium text-slate-700 flex justify-between">
@@ -433,6 +468,34 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                 }}
                 className="p-5 space-y-3.5 text-xs"
               >
+                {/* Test Card Quick Fill Pills */}
+                <div className="flex flex-wrap items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl">
+                  <span className="text-[10px] uppercase font-bold text-slate-500">Sandbox Quick Fill:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCardNumber('4111 2222 3333 4444');
+                      setCardHolder(customerName || 'Test Visa User');
+                      setCardExpiry('12/28');
+                      setCardCvv('789');
+                    }}
+                    className="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                  >
+                    ⚡ Test Visa (4111...)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCardNumber('5081 2345 6789 1234');
+                      setCardHolder(customerName || 'Test RuPay User');
+                      setCardExpiry('10/29');
+                      setCardCvv('456');
+                    }}
+                    className="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                  >
+                    ⚡ Test RuPay (5081...)
+                  </button>
+                </div>
                 <div>
                   <label className="block text-slate-700 font-medium mb-1">Card Number</label>
                   <div className="relative">

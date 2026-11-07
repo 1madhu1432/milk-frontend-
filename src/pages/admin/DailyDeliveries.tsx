@@ -31,7 +31,12 @@ export const DailyDeliveries: React.FC = () => {
     markPartialDelivery,
   } = useDairy();
 
-  const [dateFilter, setDateFilter] = useState('2026-10-10');
+  const [dateFilter, setDateFilter] = useState(() => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (deliveries.some(d => d.date === todayStr)) return todayStr;
+    if (deliveries.length > 0 && deliveries[0].date) return deliveries[0].date;
+    return todayStr;
+  });
   const [routeFilter, setRouteFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');

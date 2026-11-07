@@ -53,7 +53,7 @@ export const CustomerLayout: React.FC = () => {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
-            
+
             {/* Left: Brand Identity */}
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-emerald-600 via-teal-600 to-green-700 flex items-center justify-center text-white text-xl sm:text-2xl shadow-md shadow-emerald-700/20 shrink-0">
@@ -83,11 +83,10 @@ export const CustomerLayout: React.FC = () => {
                   <NavLink
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                      isActive
+                    className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${isActive
                         ? 'bg-emerald-50 text-emerald-800 shadow-2xs font-black'
                         : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100/80'
-                    }`}
+                      }`}
                   >
                     <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-700' : 'text-slate-400'}`} />
                     <span>{item.label}</span>
@@ -144,11 +143,10 @@ export const CustomerLayout: React.FC = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={`min-h-[48px] flex flex-col items-center justify-center py-1 rounded-xl text-[10px] font-bold transition-all ${
-                  isActive
+                className={`min-h-[48px] flex flex-col items-center justify-center py-1 rounded-xl text-[10px] font-bold transition-all ${isActive
                     ? 'text-emerald-800 bg-emerald-50 shadow-2xs font-black'
                     : 'text-slate-500 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 <Icon className={`w-5 h-5 mb-0.5 ${isActive ? 'text-emerald-700' : 'text-slate-400'}`} />
                 <span className="truncate max-w-[56px] text-center">{item.label}</span>
