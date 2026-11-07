@@ -24,4 +24,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['react-is'],
+  },
+  build: {
+    chunkSizeWarningLimit: 2500,
+  },
 });
