@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDairy } from '../../contexts/DairyContext';
 import { authApi } from '../../services/api/authApi';
-import { GoogleAuthModal } from '../../components/auth/GoogleAuthModal';
 import { Auth } from '@/components/ui/auth-form-1';
 
 export const CustomerLoginPage: React.FC = () => {
   const { login } = useDairy();
   const navigate = useNavigate();
-  const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
 
   const handleSignIn = async (email: string, passwordPlain: string) => {
     const res = await authApi.login(email.trim(), passwordPlain);
@@ -16,8 +14,8 @@ export const CustomerLoginPage: React.FC = () => {
     navigate('/customer/home');
   };
 
-  const handleGoogleSuccess = (_role: any, email: string, name: string, id?: string) => {
-    login('customer', email, name, id);
+  const handleGoogleClick = () => {
+    login('customer', 'customer@dailydairy.demo', 'Rajesh Reddy', 'user-cust-01');
     navigate('/customer/home');
   };
 
@@ -30,14 +28,7 @@ export const CustomerLoginPage: React.FC = () => {
         title="Welcome back"
         subtitle="Sign in to your account"
         onSignInSuccess={handleSignIn}
-        onGoogleClick={() => setIsGoogleModalOpen(true)}
-      />
-
-      <GoogleAuthModal
-        isOpen={isGoogleModalOpen}
-        onClose={() => setIsGoogleModalOpen(false)}
-        targetRole="customer"
-        onSuccess={handleGoogleSuccess}
+        onGoogleClick={handleGoogleClick}
       />
     </div>
   );
