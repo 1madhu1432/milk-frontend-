@@ -297,8 +297,8 @@ function AuthSignIn({
       className="p-8"
     >
       <div className="mb-8 text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-white">{title}</h1>
-        <p className="mt-1.5 text-xs text-slate-400">{subtitle}</p>
+        <h1 className="text-3xl font-semibold tracking-tight text-white">{title}</h1>
+        <p className="mt-2 text-sm text-slate-400">{subtitle}</p>
       </div>
 
       <AuthError message={formState.error} />

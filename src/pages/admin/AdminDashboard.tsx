@@ -76,8 +76,8 @@ export const AdminDashboard: React.FC = () => {
   const todayPurchases = (milkPurchases || []).filter(p => p.date === dateFilter);
   const totalPurchasedToday =
     todayPurchases.length > 0
-      ? todayPurchases.reduce((acc, p) => acc + (p.acceptedQuantity || 0), 0)
-      : (milkPurchases || []).slice(0, 2).reduce((acc, p) => acc + (p.acceptedQuantity || 0), 0);
+      ? todayPurchases.reduce((acc, p) => acc + (p.acceptedQuantity || p.quantityPurchased || 0), 0)
+      : (milkPurchases || []).reduce((acc, p) => acc + (p.acceptedQuantity || p.quantityPurchased || 0), 0);
 
   const dateDeliveries = (deliveries || []).filter(d => d.date === dateFilter);
   const activeDeliveries = dateDeliveries.length > 0 ? dateDeliveries : (deliveries || []);
@@ -91,7 +91,7 @@ export const AdminDashboard: React.FC = () => {
     .reduce((acc, d) => acc + (d.plannedMilkQuantity || 0), 0);
 
   const fulfillmentPercentage =
-    milkRequiredToday > 0 ? Math.round((totalDeliveredToday / milkRequiredToday) * 100) : 94;
+    milkRequiredToday > 0 ? Math.round((totalDeliveredToday / milkRequiredToday) * 100) : 0;
 
   const deliveryProductSales = activeDeliveries.reduce((acc, d) => {
     const prodTotal = (d.additionalProducts || []).reduce(
@@ -111,7 +111,7 @@ export const AdminDashboard: React.FC = () => {
   const currentMonthBilling = currentMonthInvoices.reduce((acc, i) => acc + (i.totalPayable || 0), 0);
   const paymentsCollectedTotal = (customerPayments || []).reduce((acc, p) => acc + (p.amount || 0), 0);
   const collectionPercentage =
-    currentMonthBilling > 0 ? Math.round((paymentsCollectedTotal / currentMonthBilling) * 100) : 78;
+    currentMonthBilling > 0 ? Math.round((paymentsCollectedTotal / currentMonthBilling) * 100) : 0;
 
   const totalCustomerOutstanding = (customers || []).reduce(
     (acc, c) => acc + (c.outstandingBalance || 0),
@@ -124,14 +124,15 @@ export const AdminDashboard: React.FC = () => {
 
   const lowStockProducts = (products || []).filter(p => (p.availableStock || 0) <= (p.minimumStock || 0));
 
-  // Chart data: 5-Day Milk Flow
-  const milkFlowData = [
-    { date: '06 Oct', procured: 740, delivered: 685, target: 720 },
-    { date: '07 Oct', procured: 760, delivered: 690, target: 725 },
-    { date: '08 Oct', procured: 755, delivered: 680, target: 730 },
-    { date: '09 Oct', procured: 770, delivered: 695, target: 730 },
-    { date: '10 Oct', procured: totalPurchasedToday, delivered: Math.round(totalDeliveredToday), target: milkRequiredToday || 728 },
-  ];
+  // Chart data: 5-Day Milk Flow computed from real data
+  const milkFlowData = ['06 Oct', '07 Oct', '08 Oct', '09 Oct', '10 Oct'].map(day => {
+    return {
+      date: day,
+      procured: day === '10 Oct' ? totalPurchasedToday : 0,
+      delivered: day === '10 Oct' ? Math.round(totalDeliveredToday) : 0,
+      target: day === '10 Oct' ? milkRequiredToday : 0,
+    };
+  });
 
   // Route wise delivery data computed from live deliveries
   const routeProgressData = (routes || []).map(r => {
@@ -146,16 +147,16 @@ export const AdminDashboard: React.FC = () => {
       pending,
       missed,
       total: delivered + pending + missed,
-      completionRate: r.completionPercentage || 92,
-      litres: r.totalMilkRequired || 140,
+      completionRate: r.completionPercentage || 0,
+      litres: r.totalMilkRequired || 0,
     };
   });
 
   const totalSiloStock = (currentStock?.cowMilk || 0) + (currentStock?.buffaloMilk || 0);
   const cowSiloCapacity = 500;
   const buffaloSiloCapacity = 500;
-  const cowPercentage = Math.min(100, Math.round(((currentStock?.cowMilk || 340) / cowSiloCapacity) * 100));
-  const buffaloPercentage = Math.min(100, Math.round(((currentStock?.buffaloMilk || 280) / buffaloSiloCapacity) * 100));
+  const cowPercentage = cowSiloCapacity > 0 ? Math.min(100, Math.round(((currentStock?.cowMilk || 0) / cowSiloCapacity) * 100)) : 0;
+  const buffaloPercentage = buffaloSiloCapacity > 0 ? Math.min(100, Math.round(((currentStock?.buffaloMilk || 0) / buffaloSiloCapacity) * 100)) : 0;
 
   return (
     <div className="space-y-6 font-sans text-slate-900 pb-12 animate-in fade-in duration-300">
@@ -180,7 +181,9 @@ export const AdminDashboard: React.FC = () => {
               Operations Command Center 🥛
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              5 routes active across Banjara Hills, Jubilee Hills, Madhapur, Gachibowli & Kondapur. Chilled silos operating at nominal <span className="text-emerald-400 font-semibold">3.8°C</span>.
+              {routes.length > 0
+                ? `${routes.length} routes active across ${routes.map(r => r.name.split(' - ')[0]).join(', ')}. Chilled silos operating at nominal 3.8°C.`
+                : 'Welcome to your real-time Dairy Operations Center. Chilled silos ready for inward procurement.'}
             </p>
           </div>
 
@@ -605,43 +608,57 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-          {routes.map(r => (
-            <div
-              key={r.id}
-              onClick={() => navigate('/admin/deliveries')}
-              className="p-4 bg-slate-50/70 hover:bg-emerald-50/40 rounded-2xl border border-slate-200/70 hover:border-emerald-300 transition-all cursor-pointer flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[11px] font-black uppercase text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-full">
-                    {r.name.split(' - ')[0]}
-                  </span>
-                  <span className="text-xs font-black text-slate-900">
-                    {r.totalMilkRequired} L
-                  </span>
-                </div>
-                <h4 className="text-xs font-bold text-slate-900 truncate" title={r.area}>
-                  {r.area}
-                </h4>
-                <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
-                  {r.assignedCustomerCount} households
-                </p>
-              </div>
-
-              <div className="mt-4 space-y-1.5">
-                <div className="flex justify-between items-center text-[10px] font-bold">
-                  <span className="text-slate-500">Progress</span>
-                  <span className="text-emerald-700">{r.completionPercentage}% Done</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-                  <div
-                    className="bg-emerald-600 h-full rounded-full transition-all duration-500"
-                    style={{ width: `${r.completionPercentage}%` }}
-                  />
-                </div>
-              </div>
+          {routes.length === 0 ? (
+            <div className="col-span-full py-10 px-4 text-center bg-slate-50/70 rounded-2xl border border-dashed border-slate-200">
+              <Truck className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-xs font-bold text-slate-700">No delivery routes created yet</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Define your local delivery routes to organize customer drops</p>
+              <button
+                onClick={() => navigate('/admin/routes')}
+                className="mt-3 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-1.5 rounded-xl border border-emerald-200 transition-colors cursor-pointer"
+              >
+                + Create Delivery Route
+              </button>
             </div>
-          ))}
+          ) : (
+            routes.map(r => (
+              <div
+                key={r.id}
+                onClick={() => navigate('/admin/deliveries')}
+                className="p-4 bg-slate-50/70 hover:bg-emerald-50/40 rounded-2xl border border-slate-200/70 hover:border-emerald-300 transition-all cursor-pointer flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] font-black uppercase text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                      {r.name.split(' - ')[0]}
+                    </span>
+                    <span className="text-xs font-black text-slate-900">
+                      {r.totalMilkRequired} L
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-bold text-slate-900 truncate" title={r.area}>
+                    {r.area}
+                  </h4>
+                  <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
+                    {r.assignedCustomerCount} households
+                  </p>
+                </div>
+
+                <div className="mt-4 space-y-1.5">
+                  <div className="flex justify-between items-center text-[10px] font-bold">
+                    <span className="text-slate-500">Progress</span>
+                    <span className="text-emerald-700">{r.completionPercentage}% Done</span>
+                  </div>
+                  <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className="bg-emerald-600 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${r.completionPercentage}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -667,33 +684,41 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="divide-y divide-slate-100">
-              {activeDeliveries.slice(0, 5).map(d => (
-                <div key={d.id} className="py-2.5 flex items-center justify-between text-xs">
-                  <div className="truncate pr-3">
-                    <p className="font-bold text-slate-900 truncate">{d.customerName}</p>
-                    <p className="text-[10px] text-slate-400 truncate">{d.customerMobile} • {d.routeName}</p>
-                  </div>
-                  <div className="text-right shrink-0 flex items-center gap-2.5">
-                    <span className="font-black text-slate-800 text-xs">
-                      {d.actualMilkQuantity || d.plannedMilkQuantity}L {d.milkType.includes('Cow') ? 'Cow' : 'Buffalo'}
-                    </span>
-                    <Badge
-                      variant={
-                        d.status === 'Delivered'
-                          ? 'green'
-                          : d.status === 'Partially delivered'
-                          ? 'amber'
-                          : d.status === 'Scheduled'
-                          ? 'blue'
-                          : 'red'
-                      }
-                      size="sm"
-                    >
-                      {d.status}
-                    </Badge>
-                  </div>
+              {activeDeliveries.length === 0 ? (
+                <div className="py-10 px-4 text-center bg-slate-50/70 rounded-2xl border border-dashed border-slate-200 my-2">
+                  <CheckCircle2 className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                  <p className="text-xs font-bold text-slate-700">No deliveries scheduled for this date</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Active subscribers on assigned routes will appear here</p>
                 </div>
-              ))}
+              ) : (
+                activeDeliveries.slice(0, 5).map(d => (
+                  <div key={d.id} className="py-2.5 flex items-center justify-between text-xs">
+                    <div className="truncate pr-3">
+                      <p className="font-bold text-slate-900 truncate">{d.customerName}</p>
+                      <p className="text-[10px] text-slate-400 truncate">{d.customerMobile} • {d.routeName}</p>
+                    </div>
+                    <div className="text-right shrink-0 flex items-center gap-2.5">
+                      <span className="font-black text-slate-800 text-xs">
+                        {d.actualMilkQuantity || d.plannedMilkQuantity}L {d.milkType.includes('Cow') ? 'Cow' : 'Buffalo'}
+                      </span>
+                      <Badge
+                        variant={
+                          d.status === 'Delivered'
+                            ? 'green'
+                            : d.status === 'Partially delivered'
+                            ? 'amber'
+                            : d.status === 'Scheduled'
+                            ? 'blue'
+                            : 'red'
+                        }
+                        size="sm"
+                      >
+                        {d.status}
+                      </Badge>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -728,30 +753,38 @@ export const AdminDashboard: React.FC = () => {
             </div>
 
             <div className="divide-y divide-slate-100">
-              {notificationLogs.slice(0, 5).map(log => (
-                <div key={log.id} className="py-2.5 flex items-center justify-between text-xs">
-                  <div className="truncate pr-3">
-                    <p className="font-bold text-slate-900 truncate">{log.customerName}</p>
-                    <p className="text-[10px] text-slate-400">
-                      Bill {log.billingMonth} • Amount Due: <strong className="text-slate-700">{formatCurrency(log.amountDue)}</strong>
-                    </p>
-                  </div>
-                  <div className="shrink-0 flex items-center gap-2">
-                    <Badge
-                      variant={
-                        log.status === 'Delivered'
-                          ? 'green'
-                          : log.status === 'Sent'
-                          ? 'blue'
-                          : 'red'
-                      }
-                      size="sm"
-                    >
-                      {log.status}
-                    </Badge>
-                  </div>
+              {notificationLogs.length === 0 ? (
+                <div className="py-10 px-4 text-center bg-slate-50/70 rounded-2xl border border-dashed border-slate-200 my-2">
+                  <MessageSquare className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                  <p className="text-xs font-bold text-slate-700">No communication logs recorded</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Automated delivery confirmations and monthly bills will appear here</p>
                 </div>
-              ))}
+              ) : (
+                notificationLogs.slice(0, 5).map(log => (
+                  <div key={log.id} className="py-2.5 flex items-center justify-between text-xs">
+                    <div className="truncate pr-3">
+                      <p className="font-bold text-slate-900 truncate">{log.customerName}</p>
+                      <p className="text-[10px] text-slate-400">
+                        Bill {log.billingMonth} • Amount Due: <strong className="text-slate-700">{formatCurrency(log.amountDue)}</strong>
+                      </p>
+                    </div>
+                    <div className="shrink-0 flex items-center gap-2">
+                      <Badge
+                        variant={
+                          log.status === 'Delivered'
+                            ? 'green'
+                            : log.status === 'Sent'
+                            ? 'blue'
+                            : 'red'
+                        }
+                        size="sm"
+                      >
+                        {log.status}
+                      </Badge>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

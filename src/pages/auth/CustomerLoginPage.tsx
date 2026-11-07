@@ -28,9 +28,7 @@ export const CustomerLoginPage: React.FC = () => {
 
       <Auth
         title="Welcome back"
-        subtitle="Sign in to your milk subscriber account"
-        defaultEmail="customer@dailydairy.demo"
-        defaultPassword="customer123"
+        subtitle="Sign in to your account"
         onSignInSuccess={handleSignIn}
         onGoogleClick={() => setIsGoogleModalOpen(true)}
       />

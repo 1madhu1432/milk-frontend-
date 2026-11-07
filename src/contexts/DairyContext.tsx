@@ -130,7 +130,7 @@ interface DairyContextType {
 
 const DairyContext = createContext<DairyContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'harish_dairy_app_state_v3';
+const STORAGE_KEY = 'milkerp_clean_production_state_v1';
 
 function emitBusinessEvent(eventType: string, detail: Record<string, any>) {
   if (typeof window !== 'undefined') {
@@ -140,20 +140,20 @@ function emitBusinessEvent(eventType: string, detail: Record<string, any>) {
 
 function loadInitialState() {
   if (typeof window !== 'undefined' && window.localStorage) {
+    // Purge all legacy dummy data keys
+    localStorage.removeItem('harish_dairy_app_state_v3');
+    localStorage.removeItem('harish_dairy_app_state_v2');
+    localStorage.removeItem('harish_dairy_state_v2');
+    localStorage.removeItem('milkerp_data_mode');
+
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        const isDemoStored = localStorage.getItem('milkerp_data_mode');
-        const isClean = isDemoStored === 'clean';
-        if (isClean && parsed.customers) {
+        if (parsed) {
           return {
             isDemoMode: false,
-            settings: parsed.settings || {
-              ...initialBusinessSettings,
-              dairyName: 'My Dairy Farm',
-              tagline: 'Fresh Milk & Daily Delivery ERP',
-            },
+            settings: parsed.settings || initialBusinessSettings,
             routes: parsed.routes || [],
             employees: parsed.employees || [],
             vendors: parsed.vendors || [],
@@ -170,80 +170,30 @@ function loadInitialState() {
             notificationLogs: parsed.notificationLogs || [],
           };
         }
-        if (parsed.customers && parsed.customers.length > 0) {
-          return {
-            isDemoMode: true,
-            settings: parsed.settings || initialBusinessSettings,
-            routes: parsed.routes || initialRoutes,
-            employees: parsed.employees || initialEmployees,
-            vendors: parsed.vendors || initialVendors,
-            products: parsed.products || initialProducts,
-            customers: parsed.customers,
-            deliveries: parsed.deliveries || [],
-            milkPurchases: parsed.milkPurchases || initialMilkPurchases,
-            vendorPayments: parsed.vendorPayments || initialVendorPayments,
-            pauseRequests: parsed.pauseRequests || initialPauseRequests,
-            productOrders: parsed.productOrders || initialProductOrders,
-            stockTransactions: parsed.stockTransactions || initialStockTransactions,
-            invoices: parsed.invoices || [],
-            customerPayments: parsed.customerPayments || initialCustomerPayments,
-            notificationLogs: parsed.notificationLogs || initialNotificationLogs,
-          };
-        }
       } catch (e) {
         console.error('Failed to load local storage state:', e);
       }
     }
   }
 
-  const isDemoStored = typeof window !== 'undefined' && window.localStorage ? localStorage.getItem('milkerp_data_mode') : null;
-  if (isDemoStored === 'clean') {
-    return {
-      isDemoMode: false,
-      settings: {
-        ...initialBusinessSettings,
-        dairyName: 'My Dairy Farm',
-        tagline: 'Fresh Milk & Daily Delivery ERP',
-      },
-      routes: [],
-      employees: [],
-      vendors: [],
-      products: initialProducts,
-      customers: [],
-      deliveries: [],
-      milkPurchases: [],
-      vendorPayments: [],
-      pauseRequests: [],
-      productOrders: [],
-      stockTransactions: [],
-      invoices: [],
-      customerPayments: [],
-      notificationLogs: [],
-    };
-  }
-
-  // Default seed data
-  const seedCusts = generateSeedCustomers();
-  const seedDels = generateSeedDeliveries(seedCusts, initialRoutes);
-  const seedInvs = generateSeedInvoices(seedCusts);
-
+  // Pure clean baseline without any dummy or mock data
   return {
-    isDemoMode: true,
+    isDemoMode: false,
     settings: initialBusinessSettings,
-    routes: initialRoutes,
-    employees: initialEmployees,
-    vendors: initialVendors,
+    routes: [],
+    employees: [],
+    vendors: [],
     products: initialProducts,
-    customers: seedCusts,
-    deliveries: seedDels,
-    milkPurchases: initialMilkPurchases,
-    vendorPayments: initialVendorPayments,
-    pauseRequests: initialPauseRequests,
-    productOrders: initialProductOrders,
-    stockTransactions: initialStockTransactions,
-    invoices: seedInvs,
-    customerPayments: initialCustomerPayments,
-    notificationLogs: initialNotificationLogs,
+    customers: [],
+    deliveries: [],
+    milkPurchases: [],
+    vendorPayments: [],
+    pauseRequests: [],
+    productOrders: [],
+    stockTransactions: [],
+    invoices: [],
+    customerPayments: [],
+    notificationLogs: [],
   };
 }
 
@@ -481,8 +431,8 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Calculate current milk stock from transactions
   const currentStock = React.useMemo(() => {
-    let cow = 240; // Base baseline storage
-    let buffalo = 190;
+    let cow = 0;
+    let buffalo = 0;
 
     stockTransactions.forEach(tx => {
       if (tx.milkTypeOrProduct === 'Cow Milk') {

@@ -28,9 +28,7 @@ export const DeliveryLoginPage: React.FC = () => {
 
       <Auth
         title="Welcome back"
-        subtitle="Sign in to your rider delivery route"
-        defaultEmail="delivery@dailydairy.demo"
-        defaultPassword="staff123"
+        subtitle="Sign in to your account"
         onSignInSuccess={handleSignIn}
         onGoogleClick={() => setIsGoogleModalOpen(true)}
       />

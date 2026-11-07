@@ -34,7 +34,7 @@ export const AdminLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F7FB] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F7F9F7] flex flex-col font-sans">
       {/* Super Admin Impersonation Persistent Banner */}
       {isImpersonating && (
         <div className="bg-gradient-to-r from-amber-600 via-orange-600 to-amber-700 text-white px-4 py-2.5 text-xs font-bold flex items-center justify-between shadow-md sticky top-0 z-50">

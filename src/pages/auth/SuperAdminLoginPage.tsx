@@ -28,9 +28,7 @@ export const SuperAdminLoginPage: React.FC = () => {
 
       <Auth
         title="Welcome back"
-        subtitle="Sign in to Platform Super Admin"
-        defaultEmail="platform.owner@milkerp.com"
-        defaultPassword="admin123"
+        subtitle="Sign in to your account"
         onSignInSuccess={handleSignIn}
         onGoogleClick={() => setIsGoogleModalOpen(true)}
       />

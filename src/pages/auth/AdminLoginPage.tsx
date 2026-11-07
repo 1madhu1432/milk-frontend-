@@ -31,8 +31,6 @@ export const AdminLoginPage: React.FC = () => {
       <Auth
         title="Welcome back"
         subtitle="Sign in to your account"
-        defaultEmail="admin@dailydairy.demo"
-        defaultPassword="admin123"
         onSignInSuccess={handleSignIn}
         onGoogleClick={() => setIsGoogleModalOpen(true)}
       />
