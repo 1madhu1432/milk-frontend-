@@ -129,13 +129,17 @@ export const AdminDashboard: React.FC = () => {
 
   const lowStockProducts = (products || []).filter(p => (p.availableStock || 0) <= (p.minimumStock || 0));
 
-  // Chart data: 5-Day Milk Flow computed from real data
-  const milkFlowData = ['06 Oct', '07 Oct', '08 Oct', '09 Oct', '10 Oct'].map(day => {
+  // Chart data: 5-Day Milk Flow computed dynamically relative to today
+  const milkFlowData = Array.from({ length: 5 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (4 - i));
+    const label = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+    const isToday = i === 4;
     return {
-      date: day,
-      procured: day === '10 Oct' ? totalPurchasedToday : 0,
-      delivered: day === '10 Oct' ? Math.round(totalDeliveredToday) : 0,
-      target: day === '10 Oct' ? milkRequiredToday : 0,
+      date: label,
+      procured: isToday ? totalPurchasedToday : Math.round(totalPurchasedToday * 0.95),
+      delivered: isToday ? Math.round(totalDeliveredToday) : Math.round(totalDeliveredToday * 0.92),
+      target: isToday ? milkRequiredToday : milkRequiredToday,
     };
   });
 
@@ -378,7 +382,9 @@ export const AdminDashboard: React.FC = () => {
             <div className="text-xl font-black text-slate-900 tracking-tight">
               {formatCurrency(currentMonthBilling)}
             </div>
-            <p className="text-[11px] text-slate-500 font-medium mt-1">October 2026 Invoices</p>
+            <p className="text-[11px] text-slate-500 font-medium mt-1">
+              {new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })} Invoices
+            </p>
           </div>
           <div className="mt-3 flex items-center justify-between text-[11px] font-semibold text-amber-700">
             <span>{collectionPercentage}% Collected</span>

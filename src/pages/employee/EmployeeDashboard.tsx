@@ -211,7 +211,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
               <div className="flex items-center justify-between text-xs font-bold">
                 <span className="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-full border border-white/15 text-[10px] uppercase font-black tracking-wider text-emerald-200">
                   <Calendar className="w-3 h-3 text-emerald-300" />
-                  Saturday, 10 Oct 2026
+                  {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}
                 </span>
                 <span className="text-emerald-200 text-[11px] font-semibold flex items-center gap-1">
                   <Clock className="w-3.5 h-3.5 text-emerald-400" />
@@ -397,17 +397,15 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                   <button
                     key={r.id}
                     onClick={() => setSelectedRouteId(r.id)}
-                    className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-2 border ${
-                      isSelected
+                    className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-2 border ${isSelected
                         ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
                         : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
-                    }`}
+                      }`}
                   >
                     <span>{r.name.split(' - ')[0]}</span>
                     <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${
-                        isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
-                      }`}
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
+                        }`}
                     >
                       {r.assignedCustomerCount}
                     </span>
@@ -461,23 +459,21 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                 return (
                   <div
                     key={del.id}
-                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2 transition-all ${
-                      isDelivered
+                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2 transition-all ${isDelivered
                         ? 'bg-emerald-50/40 border-emerald-200/80'
                         : isMissed
-                        ? 'bg-rose-50/40 border-rose-200/80'
-                        : 'bg-slate-50/80 border-slate-200 hover:border-emerald-300'
-                    }`}
+                          ? 'bg-rose-50/40 border-rose-200/80'
+                          : 'bg-slate-50/80 border-slate-200 hover:border-emerald-300'
+                      }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <span
-                        className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-[11px] shrink-0 ${
-                          isDelivered
+                        className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-[11px] shrink-0 ${isDelivered
                             ? 'bg-emerald-600 text-white'
                             : isMissed
-                            ? 'bg-rose-600 text-white'
-                            : 'bg-slate-200 text-slate-700'
-                        }`}
+                              ? 'bg-rose-600 text-white'
+                              : 'bg-slate-200 text-slate-700'
+                          }`}
                       >
                         {idx + 1}
                       </span>
@@ -531,17 +527,15 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                   <button
                     key={r.id}
                     onClick={() => setSelectedRouteId(r.id)}
-                    className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-1.5 border ${
-                      isSelected
+                    className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-1.5 border ${isSelected
                         ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
                         : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
-                    }`}
+                      }`}
                   >
                     <span>{r.name.split(' - ')[0]}</span>
                     <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                        isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
-                      }`}
+                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
+                        }`}
                     >
                       {r.assignedCustomerCount}
                     </span>
@@ -555,44 +549,40 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
           <div className="grid grid-cols-4 bg-white p-1 rounded-2xl border border-slate-200/90 shadow-2xs text-xs font-black gap-1">
             <button
               onClick={() => setFilterStatus('ALL')}
-              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${
-                filterStatus === 'ALL'
+              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'ALL'
                   ? 'bg-emerald-700 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
-              }`}
+                }`}
             >
               <span>All</span>
               <span className="text-[10px] opacity-80">({routeDeliveries.length})</span>
             </button>
             <button
               onClick={() => setFilterStatus('PENDING')}
-              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${
-                filterStatus === 'PENDING'
+              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'PENDING'
                   ? 'bg-amber-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
-              }`}
+                }`}
             >
               <span>Pending</span>
               <span className="text-[10px] opacity-80">({pendingCount})</span>
             </button>
             <button
               onClick={() => setFilterStatus('DELIVERED')}
-              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${
-                filterStatus === 'DELIVERED'
+              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'DELIVERED'
                   ? 'bg-emerald-700 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
-              }`}
+                }`}
             >
               <span>Done</span>
               <span className="text-[10px] opacity-80">({deliveredCount})</span>
             </button>
             <button
               onClick={() => setFilterStatus('MISSED')}
-              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${
-                filterStatus === 'MISSED'
+              className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'MISSED'
                   ? 'bg-rose-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
-              }`}
+                }`}
             >
               <span>Missed</span>
               <span className="text-[10px] opacity-80">({missedCount})</span>
@@ -623,25 +613,23 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
               return (
                 <div
                   key={del.id}
-                  className={`bg-white rounded-3xl border p-4 shadow-xs transition-all space-y-3 ${
-                    isDone
+                  className={`bg-white rounded-3xl border p-4 shadow-xs transition-all space-y-3 ${isDone
                       ? 'border-emerald-200/80 bg-emerald-50/20'
                       : isMissed
-                      ? 'border-rose-200/80 bg-rose-50/20'
-                      : 'border-slate-200/90 shadow-sm'
-                  }`}
+                        ? 'border-rose-200/80 bg-rose-50/20'
+                        : 'border-slate-200/90 shadow-sm'
+                    }`}
                 >
                   {/* Card Header: Stop Number, House Number, Customer Name */}
                   <div className="flex items-start justify-between gap-2.5">
                     <div className="flex items-start gap-2.5">
                       <span
-                        className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 shadow-2xs ${
-                          isDone
+                        className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 shadow-2xs ${isDone
                             ? 'bg-emerald-600 text-white'
                             : isMissed
-                            ? 'bg-rose-600 text-white'
-                            : 'bg-slate-900 text-white'
-                        }`}
+                              ? 'bg-rose-600 text-white'
+                              : 'bg-slate-900 text-white'
+                          }`}
                       >
                         #{stopNumber}
                       </span>
@@ -683,9 +671,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                         {isDone ? 'Dropped' : 'Slot'}
                       </span>
                       <span
-                        className={`font-black text-sm ${
-                          isDone ? 'text-emerald-700' : 'text-slate-700'
-                        }`}
+                        className={`font-black text-sm ${isDone ? 'text-emerald-700' : 'text-slate-700'
+                          }`}
                       >
                         {isDone ? `${del.actualMilkQuantity} L` : 'Morning'}
                       </span>
@@ -946,8 +933,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             actionType === 'deliver'
               ? 'Confirm Doorstep Milk Drop'
               : actionType === 'partial'
-              ? 'Record Partial Milk Drop'
-              : 'Mark Missed Delivery'
+                ? 'Record Partial Milk Drop'
+                : 'Mark Missed Delivery'
           }
           maxWidth="sm"
         >
@@ -1066,11 +1053,10 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`flex-1 min-h-[44px] px-3 py-2.5 text-white rounded-xl font-black shadow-xs cursor-pointer ${
-                  actionType === 'miss'
+                className={`flex-1 min-h-[44px] px-3 py-2.5 text-white rounded-xl font-black shadow-xs cursor-pointer ${actionType === 'miss'
                     ? 'bg-rose-600 hover:bg-rose-700'
                     : 'bg-emerald-600 hover:bg-emerald-700'
-                }`}
+                  }`}
               >
                 {isSubmitting ? 'Saving...' : actionType === 'miss' ? 'Confirm Missed' : 'Confirm Drop'}
               </button>

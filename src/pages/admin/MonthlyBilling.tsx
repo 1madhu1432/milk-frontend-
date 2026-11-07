@@ -35,7 +35,11 @@ export const MonthlyBilling: React.FC = () => {
     currentUser,
   } = useDairy();
 
-  const [selectedMonth, setSelectedMonth] = useState('2026-10');
+  const now = new Date();
+  const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const currentMonthLabel = now.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+
+  const [selectedMonth, setSelectedMonth] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [viewingInvoice, setViewingInvoice] = useState<Invoice | null>(null);
@@ -82,8 +86,9 @@ export const MonthlyBilling: React.FC = () => {
   const totalBalanceDue = filteredInvoices.reduce((acc, i) => acc + i.balanceRemaining, 0);
 
   const handleGenerateInvoices = () => {
-    const monthName = selectedMonth === '2026-10' ? 'October 2026' : 'November 2026';
-    const count = generateMonthlyInvoices(selectedMonth, monthName);
+    const targetMonth = selectedMonth === 'ALL' ? currentMonthKey : selectedMonth;
+    const monthName = targetMonth === currentMonthKey ? currentMonthLabel : targetMonth;
+    const count = generateMonthlyInvoices(targetMonth, monthName);
     if (count > 0) {
       alert(`Successfully generated ${count} monthly invoices for ${monthName}!`);
     } else {
@@ -201,8 +206,9 @@ export const MonthlyBilling: React.FC = () => {
             className="px-3 py-2 text-xs rounded-lg border border-slate-200 bg-white font-medium text-slate-700"
           >
             <option value="ALL">All Billing Months</option>
-            <option value="2026-10">October 2026 (Live MTD)</option>
-            <option value="2026-09">September 2026 (Finalized)</option>
+            <option value={currentMonthKey}>{currentMonthLabel} (Current MTD)</option>
+            <option value="2026-10">October 2026</option>
+            <option value="2026-09">September 2026</option>
           </select>
 
           <select
