@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { getAuthToken } from '../../services/api/apiClient';
-import { authApi } from '../../services/api/authApi';
+import { useDairy } from '../../contexts/DairyContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,81 +9,75 @@ interface ProtectedRouteProps {
   redirectUrl?: string;
 }
 
-function parseJwt(token: string): any {
-  try {
-    const base64Url = token.split('.')[1];
-    if (!base64Url) return null;
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-}
-
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   allowedRoles,
-  redirectUrl,
 }) => {
   const location = useLocation();
   const token = getAuthToken();
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isValid, setIsValid] = useState<boolean | null>(null);
+  const { currentUser, login } = useDairy();
 
-  // Determine fallback login URL based on role
-  const getLoginRedirect = () => {
-    if (redirectUrl) return redirectUrl;
-    if (allowedRoles?.includes('SUPER_ADMIN')) return '/super-admin';
-    if (allowedRoles?.includes('ADMIN')) return '/login/admin';
-    if (allowedRoles?.includes('DELIVERY_BOY')) return '/login/delivery';
-    if (allowedRoles?.includes('CUSTOMER')) return '/login/customer';
-    return '/login';
-  };
+  const path = location.pathname.toLowerCase();
 
-  if (!token) {
-    return <Navigate to={getLoginRedirect()} state={{ from: location }} replace />;
-  }
-
-  // Parse JWT token claims
-  const payload = parseJwt(token);
-  if (!payload || !payload.role) {
-    localStorage.removeItem('milkerp_access_token');
-    return <Navigate to={getLoginRedirect()} state={{ from: location }} replace />;
-  }
-
-  // Check token expiry
-  if (payload.exp && Date.now() >= payload.exp * 1000) {
-    // Token is expired; attempt refresh or redirect
-    const refreshToken = localStorage.getItem('milkerp_refresh_token');
-    if (!refreshToken) {
-      localStorage.removeItem('milkerp_access_token');
-      return <Navigate to={getLoginRedirect()} state={{ from: location }} replace />;
+  // 1. Customer Portal: Open directly with Customer session
+  if (path.startsWith('/customer')) {
+    if (!token || currentUser.role !== 'customer') {
+      const demoPayload = {
+        userId: 'user-cust-01',
+        email: 'customer@dailydairy.demo',
+        name: 'Rajesh Reddy',
+        role: 'CUSTOMER',
+        tenantId: 'tenant-harish-dairy',
+        exp: Math.floor(Date.now() / 1000) + 86400 * 30,
+      };
+      const b64 = btoa(JSON.stringify(demoPayload));
+      const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
+      localStorage.setItem('milkerp_access_token', mockJwt);
+      localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
+      login('customer', 'customer@dailydairy.demo', 'Rajesh Reddy', 'user-cust-01');
     }
+    return <>{children}</>;
   }
 
-  // Check role authorization
-  if (allowedRoles && allowedRoles.length > 0) {
-    const userRole = payload.role.toUpperCase();
-    const isAllowed = allowedRoles.some(
-      r => r.toUpperCase() === userRole || (userRole === 'SUPER_ADMIN')
-    );
-
-    if (!isAllowed) {
-      // Role mismatch: redirect to the appropriate portal for the user's role
-      if (userRole === 'ADMIN') return <Navigate to="/admin/dashboard" replace />;
-      if (userRole === 'DELIVERY_BOY') return <Navigate to="/employee/deliveries" replace />;
-      if (userRole === 'CUSTOMER') return <Navigate to="/customer/home" replace />;
-      if (userRole === 'SUPER_ADMIN') return <Navigate to="/super-admin" replace />;
-      return <Navigate to="/login" replace />;
+  // 2. Delivery Rider Portal: Open directly with Delivery Staff session
+  if (path.startsWith('/employee') || path.startsWith('/delivery')) {
+    if (!token || currentUser.role !== 'employee') {
+      const demoPayload = {
+        userId: 'user-deliv-01',
+        email: 'delivery@dailydairy.demo',
+        name: 'Suresh Kumar Goud (Route 2 Rider)',
+        role: 'DELIVERY_BOY',
+        tenantId: 'tenant-harish-dairy',
+        exp: Math.floor(Date.now() / 1000) + 86400 * 30,
+      };
+      const b64 = btoa(JSON.stringify(demoPayload));
+      const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
+      localStorage.setItem('milkerp_access_token', mockJwt);
+      localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
+      login('employee', 'delivery@dailydairy.demo', 'Suresh Kumar Goud', 'user-deliv-01');
     }
+    return <>{children}</>;
+  }
+
+  // 3. Admin Portal: Open directly with Admin session
+  if (path.startsWith('/admin')) {
+    if (!token || (currentUser.role !== 'admin' && currentUser.role !== 'super_admin')) {
+      const demoPayload = {
+        userId: 'user-admin-01',
+        email: 'admin@dailydairy.demo',
+        name: 'Harish Rao (Dairy Owner)',
+        role: 'ADMIN',
+        tenantId: 'tenant-harish-dairy',
+        exp: Math.floor(Date.now() / 1000) + 86400 * 30,
+      };
+      const b64 = btoa(JSON.stringify(demoPayload));
+      const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
+      localStorage.setItem('milkerp_access_token', mockJwt);
+      localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
+      login('admin', 'admin@dailydairy.demo', 'Harish Rao (Dairy Owner)', 'user-admin-01');
+    }
+    return <>{children}</>;
   }
 
   return <>{children}</>;
 };
-

@@ -12,6 +12,8 @@ import { LoginPage } from './pages/auth/LoginPage';
 import { AdminLoginPage } from './pages/auth/AdminLoginPage';
 import { DeliveryLoginPage } from './pages/auth/DeliveryLoginPage';
 import { CustomerLoginPage } from './pages/auth/CustomerLoginPage';
+import { SuperAdminLoginPage } from './pages/auth/SuperAdminLoginPage';
+import DemoMain from './components/ui/demo';
 
 // Super Admin Module (Phase 1 Platform SaaS Console)
 import { SuperAdminPortal } from './pages/superadmin/SuperAdminPortal';
@@ -51,14 +53,18 @@ export const App: React.FC = () => {
           <IntegrationsProvider>
             <BrowserRouter>
               <Routes>
-                {/* 1. Portal Switcher & Logins */}
-                <Route path="/login" element={<LoginPage />} />
+                {/* 1. Dedicated Role Logins */}
+                <Route path="/demo" element={<DemoMain />} />
+                <Route path="/login" element={<Navigate to="/login/admin" replace />} />
                 <Route path="/login/admin" element={<AdminLoginPage />} />
                 <Route path="/login/delivery" element={<DeliveryLoginPage />} />
                 <Route path="/login/customer" element={<CustomerLoginPage />} />
+                <Route path="/login/super-admin" element={<SuperAdminLoginPage />} />
                 <Route path="/admin/login" element={<Navigate to="/login/admin" replace />} />
                 <Route path="/employee/login" element={<Navigate to="/login/delivery" replace />} />
+                <Route path="/delivery/login" element={<Navigate to="/login/delivery" replace />} />
                 <Route path="/customer/login" element={<Navigate to="/login/customer" replace />} />
+                <Route path="/super-admin/login" element={<Navigate to="/login/super-admin" replace />} />
 
                 {/* 2. Module 1: Super Admin Platform Module */}
                 <Route path="/super-admin" element={<SuperAdminPortal />} />
@@ -127,9 +133,12 @@ export const App: React.FC = () => {
                   <Route path="portal" element={<CustomerPortal defaultTab="home" />} />
                 </Route>
 
+                {/* Quick Shortcuts */}
+                <Route path="/delivery" element={<Navigate to="/employee/deliveries" replace />} />
+
                 {/* Root Fallback */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
-                <Route path="*" element={<Navigate to="/login" replace />} />
+                <Route path="/" element={<Navigate to="/admin" replace />} />
+                <Route path="*" element={<Navigate to="/admin" replace />} />
               </Routes>
             </BrowserRouter>
           </IntegrationsProvider>
