@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
-import { useTenant } from '../../contexts/TenantContext';
+import { useTenantBranding } from '../../contexts/TenantBrandingContext';
 import { useDairy } from '../../contexts/DairyContext';
 import {
-  ShieldAlert,
   ShieldCheck,
   Truck,
   UserCircle,
@@ -34,8 +33,12 @@ export const GoogleLogoSvg = ({ className = 'w-5 h-5' }: { className?: string })
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { currentTenant } = useTenant();
+  const [searchParams] = useSearchParams();
+  const { branding } = useTenantBranding();
   const { login } = useDairy();
+
+  const dairySlug = searchParams.get('dairy') || searchParams.get('tenant') || (branding.slug !== 'dairy' ? branding.slug : '');
+  const dairyQueryString = dairySlug ? `?dairy=${encodeURIComponent(dairySlug)}` : '';
 
   const [activeRoleForGoogle, setActiveRoleForGoogle] = useState<'admin' | 'employee' | 'customer' | 'auto'>('auto');
 
@@ -86,58 +89,44 @@ export const LoginPage: React.FC = () => {
     {
       id: 'customer',
       title: 'Customer / Household Portal',
-      routePath: '/login/customer',
+      routePath: `/login/customer${dairyQueryString}`,
       roleSubtitle: 'Household Milk Subscriber',
       description: 'Daily milk calendar, weekday quotas, vacations pause/resume, extra milk orders & instant UPI bills.',
       icon: UserCircle,
       emoji: '🥛',
       role: 'customer' as const,
-      badge: 'Separate Login Page',
+      badge: 'Subscriber Portal',
       badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
-      directButtonText: 'Open Customer Login Page',
+      directButtonText: 'Customer Sign In',
       btnClass: 'from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700',
     },
     {
       id: 'delivery',
       title: 'Delivery Staff Portal',
-      routePath: '/login/delivery',
+      routePath: `/login/delivery${dairyQueryString}`,
       roleSubtitle: 'Route Rider / Dispatch Team',
       description: 'Mobile delivery route stops, sequential house delivery logs, quantity adjustment & cash/UPI recording.',
       icon: Truck,
       emoji: '🚚',
       role: 'employee' as const,
-      badge: 'Separate Login Page',
+      badge: 'Rider App',
       badgeClass: 'bg-teal-100 text-teal-800 border-teal-300',
-      directButtonText: 'Open Delivery Login Page',
+      directButtonText: 'Rider Sign In',
       btnClass: 'from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700',
     },
     {
       id: 'admin',
       title: 'Dairy Admin / Owner ERP',
-      routePath: '/login/admin',
+      routePath: `/login/admin${dairyQueryString}`,
       roleSubtitle: 'Dairy Business Owner / Operator',
-      description: `Complete management for ${currentTenant.name}. Customers, routes, milk procurement, QC testing, billing & settings.`,
+      description: `Complete management for ${branding.name}. Customers, routes, milk procurement, QC testing, billing & settings.`,
       icon: ShieldCheck,
       emoji: '🏢',
       role: 'admin' as const,
-      badge: 'Separate Login Page',
+      badge: 'Admin Console',
       badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
-      directButtonText: 'Open Dairy Admin Login Page',
+      directButtonText: 'Dairy Admin Sign In',
       btnClass: 'from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700',
-    },
-    {
-      id: 'super-admin',
-      title: 'Super Admin Platform Console',
-      routePath: '/login/super-admin',
-      roleSubtitle: 'SaaS Platform Owner',
-      description: 'Global multi-tenant dashboard, manage all dairy businesses, plans, platform revenue, and custom domains.',
-      icon: ShieldAlert,
-      emoji: '👑',
-      role: null,
-      badge: 'Separate Login Page',
-      badgeClass: 'bg-purple-100 text-purple-800 border-purple-300',
-      directButtonText: 'Open Super Admin Login Page',
-      btnClass: 'from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800',
     },
   ];
 
@@ -174,8 +163,8 @@ export const LoginPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 4 Application Modules Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-7xl w-full relative z-10">
+      {/* 3 Application Modules Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl w-full relative z-10">
         {modules.map((m) => (
           <div
             key={m.id}
@@ -239,7 +228,7 @@ export const LoginPage: React.FC = () => {
       <div className="mt-6 text-center text-xs text-slate-400 relative z-10 font-medium space-y-1">
         <div>© 2026 DairyNexa Platform • Complete Multi-Tenant Architecture</div>
         <div className="text-[11px] text-slate-500">
-          Individual URLs: <span className="text-emerald-400 font-mono">/login/admin</span> • <span className="text-blue-400 font-mono">/login/customer</span> • <span className="text-teal-400 font-mono">/login/delivery</span> • <span className="text-purple-400 font-mono">/login/super-admin</span>
+          Individual Portals: <span className="text-emerald-400 font-mono">/login/admin</span> • <span className="text-blue-400 font-mono">/login/customer</span> • <span className="text-teal-400 font-mono">/login/delivery</span>
         </div>
       </div>
     </div>

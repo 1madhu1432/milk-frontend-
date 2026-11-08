@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDairy } from '../../contexts/DairyContext';
 import { useIntegrations } from '../../contexts/IntegrationsContext';
 import { BusinessSettings } from '../../models/types';
@@ -13,6 +14,7 @@ import {
   ShieldCheck,
   CreditCard,
   MessageSquare,
+  Palette,
   Mail,
   Smartphone,
   Lock,
@@ -60,6 +62,7 @@ export const AdminSettings: React.FC = () => {
   } = useIntegrations();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>('integrations');
+  const navigate = useNavigate();
   const [form, setForm] = useState<BusinessSettings>(settings);
   const [activeModal, setActiveModal] = useState<'razorpay' | 'whatsapp' | 'email' | 'sms' | null>(null);
 
@@ -204,6 +207,16 @@ export const AdminSettings: React.FC = () => {
         >
           <Building2 className="w-4 h-4 text-slate-600" />
           <span>Dairy Profile & Operations</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate('/admin/settings/branding')}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 cursor-pointer"
+        >
+          <Palette className="w-4 h-4 text-emerald-600" />
+          <span>Tenant Branding</span>
+          <span className="text-[10px] bg-emerald-600 text-white font-extrabold px-1.5 py-0.5 rounded">White-Label</span>
         </button>
 
         <button

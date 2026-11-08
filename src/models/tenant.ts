@@ -34,11 +34,15 @@ export interface TenantBranding {
   tagline: string;
   logoEmoji: string;
   logoUrl?: string;
+  faviconUrl?: string;
   primaryColor: string;
+  secondaryColor?: string;
   accentColor: string;
   supportEmail: string;
   supportPhone: string;
+  contactPhone?: string;
   address: string;
+  businessAddress?: string;
   gstin?: string;
 }
 

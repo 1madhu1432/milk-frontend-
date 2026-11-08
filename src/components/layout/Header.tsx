@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDairy } from '../../contexts/DairyContext';
+import { useTenantBranding } from '../../contexts/TenantBrandingContext';
 import { Modal } from '../common/Modal';
 import {
   Bell,
@@ -25,6 +26,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   const { currentUser, settings, isDemoMode, clearAllData, loadDemoData, resetDemoData, notificationLogs, logout } = useDairy();
+  const { branding } = useTenantBranding();
   const navigate = useNavigate();
 
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -97,15 +99,23 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
         )}
         <div className="flex items-center gap-3">
           <div className="relative">
-            <span className="flex items-center justify-center w-10 h-10 text-xl bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl shadow-sm border border-emerald-200/60 ring-2 ring-emerald-500/10">
-              🥛
-            </span>
+            {branding.logoUrl ? (
+              <img
+                src={branding.logoUrl}
+                alt="Logo"
+                className="w-10 h-10 object-contain rounded-2xl bg-slate-50 border border-slate-200 p-0.5 shadow-sm"
+              />
+            ) : (
+              <span className="flex items-center justify-center w-10 h-10 text-xl bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl shadow-sm border border-emerald-200/60 ring-2 ring-emerald-500/10">
+                {branding.logoEmoji || '🥛'}
+              </span>
+            )}
             <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-white"></span>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
               <h1 className="text-base font-extrabold text-slate-900 tracking-tight">
-                {settings?.dairyName || 'DairyNexa'}
+                {branding.name || settings?.dairyName || 'DairyNexa'}
               </h1>
               {isDemoMode ? (
                 <span

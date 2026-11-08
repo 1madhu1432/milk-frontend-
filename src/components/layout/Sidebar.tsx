@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useDairy } from '../../contexts/DairyContext';
+import { useTenantBranding } from '../../contexts/TenantBrandingContext';
 import {
   LayoutDashboard,
   Users,
@@ -18,6 +19,7 @@ import {
   MessageSquare,
   BarChart3,
   Settings,
+  Palette,
   X,
   LogOut,
 } from 'lucide-react';
@@ -39,6 +41,7 @@ interface NavSection {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { logout, currentUser } = useDairy();
+  const { branding } = useTenantBranding();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -112,6 +115,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         items: [
           { to: '/admin/notifications', label: 'WhatsApp Alerts', icon: MessageSquare },
           { to: '/admin/reports', label: 'Reports & P&L', icon: BarChart3 },
+          { to: '/admin/settings/branding', label: 'Tenant Branding', icon: Palette },
           { to: '/admin/settings', label: 'Business Settings', icon: Settings },
         ],
       },
@@ -136,8 +140,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100 md:hidden">
           <div className="flex items-center gap-2">
-            <span className="text-xl">🥛</span>
-            <span className="font-extrabold text-slate-900 text-sm">DairyNexa Menu</span>
+            {branding.logoUrl ? (
+              <img src={branding.logoUrl} alt="Logo" className="h-6 object-contain" />
+            ) : (
+              <span className="text-xl">{branding.logoEmoji || '🥛'}</span>
+            )}
+            <span className="font-extrabold text-slate-900 text-sm truncate max-w-[160px]">{branding.name}</span>
           </div>
           <button
             onClick={onClose}

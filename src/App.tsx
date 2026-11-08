@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { TenantBrandingProvider } from './contexts/TenantBrandingContext';
 import { TenantProvider } from './contexts/TenantContext';
 import { DairyProvider } from './contexts/DairyContext';
 import { IntegrationsProvider } from './contexts/IntegrationsContext';
@@ -37,6 +38,7 @@ import { PaymentManagement } from './pages/admin/PaymentManagement';
 import { WhatsAppNotifications } from './pages/admin/WhatsAppNotifications';
 import { ReportsAnalytics } from './pages/admin/ReportsAnalytics';
 import { AdminSettings } from './pages/admin/AdminSettings';
+import { BrandingSettingsPage } from './pages/admin/BrandingSettingsPage';
 
 // Employee Portal
 import { EmployeeDashboard } from './pages/employee/EmployeeDashboard';
@@ -50,60 +52,67 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 export const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <TenantProvider>
-        <DairyProvider>
-          <IntegrationsProvider>
-            <BrowserRouter>
-              <Routes>
-                {/* 1. Public Landing Page */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/landing" element={<LandingPage />} />
+      <BrowserRouter>
+        <TenantBrandingProvider>
+          <TenantProvider>
+            <DairyProvider>
+              <IntegrationsProvider>
+                <Routes>
+                  {/* 1. Public Landing Page */}
+                  <Route path="/" element={<LandingPage />} />
+                  <Route path="/landing" element={<LandingPage />} />
 
-                {/* 2. Dedicated Role Logins */}
-                <Route path="/demo" element={<DemoMain />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/login/admin" element={<AdminLoginPage />} />
-                <Route path="/login/delivery" element={<DeliveryLoginPage />} />
-                <Route path="/login/customer" element={<CustomerLoginPage />} />
-                <Route path="/login/super-admin" element={<SuperAdminLoginPage />} />
-                <Route path="/activate" element={<TenantActivationPage />} />
-                <Route path="/admin/login" element={<Navigate to="/login/admin" replace />} />
-                <Route path="/employee/login" element={<Navigate to="/login/delivery" replace />} />
-                <Route path="/delivery/login" element={<Navigate to="/login/delivery" replace />} />
-                <Route path="/customer/login" element={<Navigate to="/login/customer" replace />} />
-                <Route path="/super-admin/login" element={<Navigate to="/login/super-admin" replace />} />
+                  {/* 2. Dedicated Role Logins */}
+                  <Route path="/demo" element={<DemoMain />} />
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/login/admin" element={<AdminLoginPage />} />
+                  <Route path="/login/delivery" element={<DeliveryLoginPage />} />
+                  <Route path="/login/customer" element={<CustomerLoginPage />} />
+                  <Route path="/login/super-admin" element={<SuperAdminLoginPage />} />
+                  <Route path="/login/superadmin" element={<Navigate to="/login/super-admin" replace />} />
+                  <Route path="/activate" element={<TenantActivationPage />} />
+                  <Route path="/admin/login" element={<Navigate to="/login/admin" replace />} />
+                  <Route path="/employee/login" element={<Navigate to="/login/delivery" replace />} />
+                  <Route path="/delivery/login" element={<Navigate to="/login/delivery" replace />} />
+                  <Route path="/customer/login" element={<Navigate to="/login/customer" replace />} />
+                  <Route path="/super-admin/login" element={<Navigate to="/login/super-admin" replace />} />
+                  <Route path="/superadmin/login" element={<Navigate to="/login/super-admin" replace />} />
 
-                {/* 2. Module 1: Super Admin Platform Module */}
-                <Route path="/super-admin" element={<SuperAdminPortal />} />
-                <Route path="/super-admin/*" element={<SuperAdminPortal />} />
+                  {/* 2. Module 1: Super Admin Platform Module */}
+                  <Route path="/super-admin" element={<SuperAdminPortal />} />
+                  <Route path="/super-admin/*" element={<SuperAdminPortal />} />
+                  <Route path="/superadmin" element={<Navigate to="/super-admin" replace />} />
+                  <Route path="/superadmin/*" element={<Navigate to="/super-admin" replace />} />
 
-                {/* 3. Module 2: Admin Business Workspace */}
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
-                      <AdminLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<Navigate to="/admin/dashboard" replace />} />
-                  <Route path="dashboard" element={<AdminDashboard />} />
-                  <Route path="customers" element={<CustomerManagement />} />
-                  <Route path="employees" element={<EmployeeManagement />} />
-                  <Route path="routes" element={<RouteManagement />} />
-                  <Route path="vendors" element={<VendorManagement />} />
-                  <Route path="purchases" element={<MilkPurchases />} />
-                  <Route path="inventory" element={<StockManagement />} />
-                  <Route path="pauses" element={<PauseManagement />} />
-                  <Route path="deliveries" element={<DailyDeliveries />} />
-                  <Route path="products" element={<ProductCatalogue />} />
-                  <Route path="orders" element={<ProductOrders />} />
-                  <Route path="billing" element={<MonthlyBilling />} />
-                  <Route path="payments" element={<PaymentManagement />} />
-                  <Route path="notifications" element={<WhatsAppNotifications />} />
-                  <Route path="reports" element={<ReportsAnalytics />} />
-                  <Route path="settings" element={<AdminSettings />} />
-                </Route>
+                  {/* 3. Module 2: Admin Business Workspace */}
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+                        <AdminLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="customers" element={<CustomerManagement />} />
+                    <Route path="employees" element={<EmployeeManagement />} />
+                    <Route path="routes" element={<RouteManagement />} />
+                    <Route path="vendors" element={<VendorManagement />} />
+                    <Route path="purchases" element={<MilkPurchases />} />
+                    <Route path="inventory" element={<StockManagement />} />
+                    <Route path="pauses" element={<PauseManagement />} />
+                    <Route path="deliveries" element={<DailyDeliveries />} />
+                    <Route path="products" element={<ProductCatalogue />} />
+                    <Route path="orders" element={<ProductOrders />} />
+                    <Route path="billing" element={<MonthlyBilling />} />
+                    <Route path="payments" element={<PaymentManagement />} />
+                    <Route path="notifications" element={<WhatsAppNotifications />} />
+                    <Route path="reports" element={<ReportsAnalytics />} />
+                    <Route path="settings" element={<AdminSettings />} />
+                    <Route path="settings/branding" element={<BrandingSettingsPage />} />
+                    <Route path="branding" element={<BrandingSettingsPage />} />
+                  </Route>
 
                 {/* 4. Module 3: Delivery Boy Portal */}
                 <Route
@@ -163,11 +172,12 @@ export const App: React.FC = () => {
                 {/* Root Fallback */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
-            </BrowserRouter>
-          </IntegrationsProvider>
-        </DairyProvider>
-      </TenantProvider>
-    </ErrorBoundary>
+            </IntegrationsProvider>
+          </DairyProvider>
+        </TenantProvider>
+      </TenantBrandingProvider>
+    </BrowserRouter>
+  </ErrorBoundary>
   );
 };
 

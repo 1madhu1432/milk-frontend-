@@ -134,11 +134,11 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            // Remove legacy mock tenants
-            const cleaned = parsed.filter(t => t.id !== 'tenant-gokul-organic' && t.id !== 'tenant-vrindavan-farms');
-            if (!cleaned.some(t => t.id === 'tenant-madhu-dairy')) {
-              const madhu = initialTenants.find(t => t.id === 'tenant-madhu-dairy');
-              if (madhu) cleaned.push(madhu);
+            const cleaned: Tenant[] = parsed.filter((t: Tenant) => t.id !== 'tenant-gokul-organic' && t.id !== 'tenant-vrindavan-farms');
+            // Ensure default tenant exists
+            if (!cleaned.some(t => t.id === 'tenant-dairynexa')) {
+              const defaultTenant = initialTenants.find(t => t.id === 'tenant-dairynexa');
+              if (defaultTenant) cleaned.unshift(defaultTenant);
             }
             return cleaned;
           }
@@ -200,7 +200,7 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
       }
     }
-    return 'tenant-madhu-dairy';
+    return 'tenant-dairynexa';
   });
 
   // Listen to URL query parameter or subdomain changes
