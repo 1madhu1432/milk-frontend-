@@ -1,5 +1,3 @@
-import { useIntegrations } from '../../contexts/IntegrationsContext';
-import { RazorpayIntegrationService } from '../../services/integrations/razorpayService';
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
@@ -16,8 +14,15 @@ import {
   Smartphone,
   Sparkles,
   ExternalLink,
-  RefreshCw,
+  Settings,
+  Key,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  AlertCircle,
 } from 'lucide-react';
+import { useIntegrations } from '../../contexts/IntegrationsContext';
+import { RazorpayIntegrationService } from '../../services/integrations/razorpayService';
 import { formatCurrency } from '../../utils/formatters';
 
 export interface PaymentGatewayModalProps {
@@ -52,36 +57,41 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
   description = 'Instant automated settlement via secure payment gateway',
   onSuccess,
 }) => {
+  const { integrations, updateIntegrationConfig } = useIntegrations();
+  const razorpay = integrations.razorpay;
+
   const [activeTab, setActiveTab] = useState<'upi' | 'card' | 'netbanking' | 'wallet'>('upi');
   const [step, setStep] = useState<'checkout' | 'processing' | 'success'>('checkout');
   const [processingStage, setProcessingStage] = useState('Connecting to Banking Gateway...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLaunchingRazorpay, setIsLaunchingRazorpay] = useState(false);
 
-  // UPI State
+  // Key Configuration State
+  const [showKeyConfig, setShowKeyConfig] = useState(false);
+  const [customKeyId, setCustomKeyId] = useState(razorpay?.keyId || '');
+  const [keySavedMessage, setKeySavedMessage] = useState<string | null>(null);
+
+  // UPI Simulator State
   const [selectedUpiApp, setSelectedUpiApp] = useState<'gpay' | 'phonepe' | 'paytm' | 'cred' | 'custom'>('gpay');
   const [upiId, setUpiId] = useState(
     customerMobile ? `${customerMobile}@okaxis` : 'customer@okaxis'
   );
   const [qrTimer, setQrTimer] = useState(180); // 3 mins
 
-  // Card State
+  // Card Simulator State
   const [cardNumber, setCardNumber] = useState('4532 8920 1928 4092');
   const [cardHolder, setCardHolder] = useState(customerName || 'Harish Dairy Customer');
   const [cardExpiry, setCardExpiry] = useState('08/29');
   const [cardCvv, setCardCvv] = useState('492');
   const [saveCard, setSaveCard] = useState(true);
 
-  // Netbanking State
+  // Netbanking Simulator State
   const [selectedBank, setSelectedBank] = useState('HDFC Bank');
 
-  // Wallet State
+  // Wallet Simulator State
   const [selectedWallet, setSelectedWallet] = useState('Paytm Wallet');
 
   // Completed Payment Info
-  const { integrations } = useIntegrations();
-  const razorpay = integrations.razorpay;
-  const [createdOrder, setCreatedOrder] = useState<any>(null);
-
   const [completedPayment, setCompletedPayment] = useState<{
     orderId?: string;
     isSimulated?: boolean;
@@ -90,6 +100,13 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
     methodLabel: string;
     timestamp: string;
   } | null>(null);
+
+  // Sync custom key from integrations state
+  useEffect(() => {
+    if (razorpay?.keyId && !customKeyId) {
+      setCustomKeyId(razorpay.keyId);
+    }
+  }, [razorpay?.keyId]);
 
   // Timer countdown for QR
   useEffect(() => {
@@ -107,10 +124,14 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
       setQrTimer(180);
       setCompletedPayment(null);
       setErrorMessage(null);
+      setIsLaunchingRazorpay(false);
     }
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  const currentActiveKey = customKeyId.trim() || razorpay?.keyId || 'rzp_test_1DP5mmOlF5G5ag';
+  const isRealLiveKey = currentActiveKey.startsWith('rzp_live_');
 
   const formatTimer = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -118,6 +139,118 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Save Key to Integrations Context and LocalStorage
+  const handleSaveKey = () => {
+    const key = customKeyId.trim();
+    const mode = key.startsWith('rzp_live_') ? 'live' : 'test';
+
+    updateIntegrationConfig('razorpay', {
+      keyId: key,
+      mode,
+      enabled: Boolean(key),
+      status: key ? 'configured' : 'not_configured',
+    });
+
+    setKeySavedMessage(`Saved! Active mode: ${mode.toUpperCase()}`);
+    setTimeout(() => {
+      setKeySavedMessage(null);
+      setShowKeyConfig(false);
+    }, 1800);
+  };
+
+  /**
+   * LAUNCH OFFICIAL REAL RAZORPAY STANDARD POPUP CHECKOUT
+   * Uses checkout.razorpay.com/v1/checkout.js SDK with real UPI, Cards, NetBanking
+   */
+  const handleOpenRealRazorpay = () => {
+    setErrorMessage(null);
+    setIsLaunchingRazorpay(true);
+
+    const launchPopup = () => {
+      try {
+        const activeKey = customKeyId.trim() || razorpay?.keyId || 'rzp_test_1DP5mmOlF5G5ag';
+        const isLive = activeKey.startsWith('rzp_live_');
+
+        const options: any = {
+          key: activeKey,
+          amount: Math.round(amount * 100), // In paise (100 paise = 1 INR)
+          currency: 'INR',
+          name: 'Harish Dairy',
+          description: invoiceNumber ? `Payment for Bill ${invoiceNumber}` : 'Milk Subscription Advance Top-up',
+          image: 'https://cdn-icons-png.flaticon.com/512/3050/3050158.png',
+          handler: function (response: any) {
+            setIsLaunchingRazorpay(false);
+            const now = new Date();
+            const paymentId = response.razorpay_payment_id || `pay_${Date.now().toString().slice(-8)}`;
+            const orderId = response.razorpay_order_id || `order_${Date.now().toString().slice(-6)}`;
+            
+            const paymentInfo = {
+              orderId,
+              paymentId,
+              referenceNo: `RZP-${paymentId.slice(-6).toUpperCase()}`,
+              methodLabel: `Razorpay Gateway (${isLive ? 'Live Real Money' : 'Standard Test'})`,
+              timestamp: `${now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })} at ${now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}`,
+              isSimulated: !isLive,
+            };
+
+            setCompletedPayment(paymentInfo);
+            setStep('success');
+          },
+          prefill: {
+            name: customerName || 'Dairy Customer',
+            contact: customerMobile || '',
+            email: 'customer@harishdairy.in',
+          },
+          notes: {
+            customerName,
+            customerMobile: customerMobile || '',
+            invoiceNumber: invoiceNumber || '',
+            dairyApp: 'Harish Dairy Management System',
+          },
+          theme: {
+            color: '#16803D',
+            backdrop_color: 'rgba(15, 23, 42, 0.75)',
+          },
+          modal: {
+            ondismiss: function () {
+              setIsLaunchingRazorpay(false);
+            },
+          },
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', function (resp: any) {
+          setIsLaunchingRazorpay(false);
+          setErrorMessage(`Payment failed: ${resp.error?.description || 'Transaction cancelled or declined by bank.'}`);
+        });
+        rzp.open();
+      } catch (err: any) {
+        setIsLaunchingRazorpay(false);
+        setErrorMessage(`Could not launch Razorpay popup: ${err.message || 'Please check your internet connection or key.'}`);
+      }
+    };
+
+    // If script isn't loaded yet, dynamically inject it
+    if (typeof (window as any).Razorpay === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => {
+        launchPopup();
+      };
+      script.onerror = () => {
+        setIsLaunchingRazorpay(false);
+        setErrorMessage('Failed to load Razorpay Checkout SDK from CDN. Please check your internet connection.');
+      };
+      document.body.appendChild(script);
+    } else {
+      launchPopup();
+    }
+  };
+
+  /**
+   * Fast Simulated Sandbox Approval (for offline/instant testing)
+   */
   const handleStartPayment = async (methodTitle: string) => {
     setErrorMessage(null);
     setStep('processing');
@@ -136,7 +269,6 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
         razorpay
       );
 
-      setCreatedOrder(order);
       setProcessingStage('Authorizing & verifying payment signature...');
 
       // 2. Perform backend signature verification
@@ -207,12 +339,12 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-extrabold tracking-tight">Harish Dairy Gateway</h3>
+                <h3 className="text-sm font-extrabold tracking-tight">Harish Dairy Payment Gateway</h3>
                 <span className="text-[10px] bg-emerald-400/20 text-emerald-200 border border-emerald-400/30 px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">
                   256-bit SSL
                 </span>
               </div>
-              <p className="text-[11px] text-emerald-200">RBI Compliant • NPCI Verified</p>
+              <p className="text-[11px] text-emerald-200">RBI Compliant • Official Razorpay Checkout</p>
             </div>
           </div>
 
@@ -226,7 +358,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
             {step === 'checkout' && (
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors ml-1"
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors ml-1 cursor-pointer"
                 title="Cancel & Close"
               >
                 <X className="w-4 h-4" />
@@ -248,40 +380,174 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
           )}
         </div>
 
-        {/* Test Sandbox Mode Banner */}
-        <div className="bg-amber-500/10 border-b border-amber-200 px-5 py-2 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2 text-amber-900 font-bold">
+        {/* Razorpay Gateway Status Bar & Key Config Trigger */}
+        <div className={`px-5 py-2 border-b flex items-center justify-between text-xs transition-colors ${
+          isRealLiveKey 
+            ? 'bg-emerald-500/10 border-emerald-200 text-emerald-900' 
+            : 'bg-amber-500/10 border-amber-200 text-amber-900'
+        }`}>
+          <div className="flex items-center gap-2 font-bold">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                isRealLiveKey ? 'bg-emerald-400' : 'bg-amber-400'
+              }`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                isRealLiveKey ? 'bg-emerald-500' : 'bg-amber-500'
+              }`}></span>
             </span>
-            <span>Razorpay Sandbox Mode Active</span>
+            <span>
+              {isRealLiveKey ? '🔴 Razorpay Live Real Gateway' : '🧪 Razorpay Sandbox Test Mode'}
+            </span>
+            <span className="font-mono text-[10px] bg-white/80 px-2 py-0.5 rounded border border-slate-200 text-slate-700">
+              {currentActiveKey.slice(0, 16)}...
+            </span>
           </div>
-          <span className="font-mono text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-semibold">
-            {razorpay?.keyId || 'rzp_test_milkerp_dev_2026'}
-          </span>
+
+          <button
+            type="button"
+            onClick={() => setShowKeyConfig(!showKeyConfig)}
+            className="flex items-center gap-1 text-[11px] font-bold text-slate-700 hover:text-emerald-800 bg-white hover:bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-lg shadow-2xs transition-all cursor-pointer"
+          >
+            <Settings className="w-3 h-3 text-slate-500" />
+            <span>{showKeyConfig ? 'Hide Key' : 'API Key'}</span>
+            {showKeyConfig ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </button>
         </div>
+
+        {/* Collapsible Razorpay Key Manager Drawer */}
+        {showKeyConfig && (
+          <div className="bg-slate-50 border-b border-slate-200 p-4 text-xs space-y-3 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 font-bold text-slate-800">
+                <Key className="w-4 h-4 text-emerald-600" />
+                <span>Configure Your Real Razorpay Gateway Key</span>
+              </div>
+              <a
+                href="https://dashboard.razorpay.com/#/access/api-keys"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] text-emerald-700 hover:underline flex items-center gap-1 font-semibold"
+              >
+                <span>Get Key from Razorpay</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+
+            <p className="text-[11px] text-slate-500">
+              To accept <strong>real money directly into your bank account</strong>, paste your live key starting with <code className="bg-slate-200 px-1 py-0.2 rounded font-mono text-slate-800">rzp_live_</code>. For testing, use <code className="bg-slate-200 px-1 py-0.2 rounded font-mono text-slate-800">rzp_test_</code>.
+            </p>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={customKeyId}
+                onChange={e => setCustomKeyId(e.target.value)}
+                placeholder="rzp_live_xxxxxxxxxxxx or rzp_test_xxxxxxxxxxxx"
+                className="flex-1 px-3 py-2 bg-white rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-xs"
+              />
+              <button
+                type="button"
+                onClick={handleSaveKey}
+                className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-bold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              >
+                <Check className="w-3.5 h-3.5" />
+                <span>Save Key</span>
+              </button>
+            </div>
+
+            {keySavedMessage && (
+              <p className="text-[11px] font-bold text-emerald-700 flex items-center gap-1 animate-fade-in">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>{keySavedMessage}</span>
+              </p>
+            )}
+          </div>
+        )}
 
         {/* STEP 1: CHECKOUT VIEW */}
         {step === 'checkout' && (
           <div>
             {errorMessage && (
-              <div className="mx-5 my-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center justify-between">
-                <span>⚠️ {errorMessage}</span>
+              <div className="mx-5 my-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs flex items-center justify-between animate-fade-in">
+                <div className="flex items-center gap-1.5">
+                  <AlertCircle className="w-4 h-4 text-red-500 shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
                 <button
                   type="button"
                   onClick={() => setErrorMessage(null)}
-                  className="text-red-500 hover:text-red-700 font-bold ml-2 text-sm"
+                  className="text-red-500 hover:text-red-700 font-bold ml-2 text-sm cursor-pointer"
                 >
                   ✕
                 </button>
               </div>
             )}
+
+            {/* HIGH-IMPACT PROMINENT REAL RAZORPAY CTA */}
+            <div className="p-4 sm:p-5 pb-3">
+              <div className="p-4 bg-gradient-to-r from-emerald-700 via-emerald-800 to-[#14532D] rounded-2xl text-white shadow-lg space-y-3 relative overflow-hidden">
+                <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-xl pointer-events-none" />
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-300 animate-pulse" />
+                    <span className="text-[11px] font-black uppercase tracking-wider text-emerald-200">
+                      Official Razorpay Checkout
+                    </span>
+                  </div>
+                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-black tracking-wider uppercase ${
+                    isRealLiveKey ? 'bg-red-500 text-white' : 'bg-emerald-400/20 text-emerald-200 border border-emerald-400/30'
+                  }`}>
+                    {isRealLiveKey ? '🔴 LIVE REAL PAYMENTS' : '🧪 TEST MODE'}
+                  </span>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-base font-extrabold text-white tracking-tight">
+                      Open Real Razorpay Window
+                    </h4>
+                    <p className="text-xs text-emerald-100/90 mt-0.5 leading-relaxed">
+                      Instant popup for Google Pay, PhonePe, Paytm, BHIM QR, Credit/Debit Cards & 50+ Banks.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleOpenRealRazorpay}
+                    disabled={isLaunchingRazorpay}
+                    className="w-full sm:w-auto px-5 py-3 bg-white hover:bg-emerald-50 text-emerald-800 rounded-xl font-black text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer transform active:scale-95 shrink-0"
+                  >
+                    {isLaunchingRazorpay ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-emerald-700 border-t-transparent rounded-full animate-spin" />
+                        <span>Opening Razorpay...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>⚡ Pay {formatCurrency(amount)}</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Divider: Local Sandbox Simulator */}
+            <div className="px-5 py-1 flex items-center gap-3">
+              <div className="h-px bg-slate-200 flex-1" />
+              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                Or Test via Fast Simulator
+              </span>
+              <div className="h-px bg-slate-200 flex-1" />
+            </div>
+
             {/* Gateway Methods Tabs */}
             <div className="flex border-b border-slate-200 bg-slate-50 text-xs font-semibold">
               <button
                 onClick={() => setActiveTab('upi')}
-                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all ${
+                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
                   activeTab === 'upi'
                     ? 'border-[#16803D] text-[#14532D] bg-white shadow-xs font-bold'
                     : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -293,7 +559,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
 
               <button
                 onClick={() => setActiveTab('card')}
-                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all ${
+                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
                   activeTab === 'card'
                     ? 'border-[#16803D] text-[#14532D] bg-white shadow-xs font-bold'
                     : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -305,7 +571,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
 
               <button
                 onClick={() => setActiveTab('netbanking')}
-                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all ${
+                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
                   activeTab === 'netbanking'
                     ? 'border-[#16803D] text-[#14532D] bg-white shadow-xs font-bold'
                     : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -317,7 +583,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
 
               <button
                 onClick={() => setActiveTab('wallet')}
-                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all ${
+                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 border-b-2 transition-all cursor-pointer ${
                   activeTab === 'wallet'
                     ? 'border-[#16803D] text-[#14532D] bg-white shadow-xs font-bold'
                     : 'border-transparent text-slate-500 hover:text-slate-800'
@@ -387,16 +653,16 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                       </span>
                       <div className="grid grid-cols-2 gap-2">
                         {[
-                          { id: 'gpay', label: 'Google Pay', color: 'hover:border-blue-500 bg-blue-50/30 text-blue-900' },
-                          { id: 'phonepe', label: 'PhonePe', color: 'hover:border-purple-500 bg-purple-50/30 text-purple-900' },
-                          { id: 'paytm', label: 'Paytm UPI', color: 'hover:border-sky-500 bg-sky-50/30 text-sky-900' },
-                          { id: 'cred', label: 'CRED UPI', color: 'hover:border-neutral-800 bg-neutral-50 text-neutral-900' },
+                          { id: 'gpay', label: 'Google Pay' },
+                          { id: 'phonepe', label: 'PhonePe' },
+                          { id: 'paytm', label: 'Paytm UPI' },
+                          { id: 'cred', label: 'CRED UPI' },
                         ].map(app => (
                           <button
                             type="button"
                             key={app.id}
                             onClick={() => setSelectedUpiApp(app.id as any)}
-                            className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all ${
+                            className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                               selectedUpiApp === app.id
                                 ? 'border-[#16803D] bg-emerald-50 text-[#14532D] ring-2 ring-emerald-200'
                                 : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
@@ -449,7 +715,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                     <button
                       type="button"
                       onClick={() => handleStartPayment(`UPI (${upiId})`)}
-                      className="px-4 py-2 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5"
+                      className="px-4 py-2 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer"
                     >
                       <span>Pay {formatCurrency(amount)}</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -562,7 +828,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 mt-2 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 mt-2 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   <span>Authorize & Pay {formatCurrency(amount)}</span>
@@ -590,7 +856,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                         type="button"
                         key={bank}
                         onClick={() => setSelectedBank(bank)}
-                        className={`p-3 rounded-xl border text-center transition-all ${
+                        className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
                           selectedBank === bank
                             ? 'border-[#16803D] bg-emerald-50 text-[#14532D] font-bold ring-2 ring-emerald-200'
                             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
@@ -626,7 +892,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                 <button
                   type="button"
                   onClick={() => handleStartPayment(`NetBanking (${selectedBank})`)}
-                  className="w-full py-2.5 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 mt-2"
+                  className="w-full py-2.5 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer"
                 >
                   <ExternalLink className="w-3.5 h-3.5" />
                   <span>Log in & Pay via {selectedBank}</span>
@@ -652,7 +918,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                         type="button"
                         key={w.name}
                         onClick={() => setSelectedWallet(w.name)}
-                        className={`w-full p-3 rounded-xl border flex items-center justify-between text-left transition-all ${
+                        className={`w-full p-3 rounded-xl border flex items-center justify-between text-left transition-all cursor-pointer ${
                           selectedWallet === w.name
                             ? 'border-[#16803D] bg-emerald-50 ring-2 ring-emerald-200'
                             : 'border-slate-200 bg-white hover:border-slate-300'
@@ -674,7 +940,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                 <button
                   type="button"
                   onClick={() => handleStartPayment(`Wallet (${selectedWallet})`)}
-                  className="w-full py-2.5 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Link & Pay {formatCurrency(amount)}</span>
                 </button>
@@ -773,7 +1039,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
               <button
                 type="button"
                 onClick={handlePrintReceipt}
-                className="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                className="flex-1 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span>Print Receipt</span>
@@ -782,7 +1048,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
               <button
                 type="button"
                 onClick={handleFinishSuccess}
-                className="flex-1 py-2.5 px-4 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold text-xs transition-all shadow-md flex items-center justify-center gap-1.5"
+                className="flex-1 py-2.5 px-4 bg-[#16803D] hover:bg-[#14532D] text-white rounded-xl font-bold text-xs transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Done & Update Account</span>
