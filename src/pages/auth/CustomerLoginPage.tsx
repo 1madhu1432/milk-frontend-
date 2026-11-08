@@ -2,12 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useDairy } from '../../contexts/DairyContext';
+import { useTenant } from '../../contexts/TenantContext';
 import { authApi } from '../../services/api/authApi';
 import { Auth } from '@/components/ui/auth-form-1';
 
 export const CustomerLoginPage: React.FC = () => {
   const { login } = useDairy();
+  const { currentTenant } = useTenant();
   const navigate = useNavigate();
+
+  const dairyName = currentTenant?.name || 'DairyNexa';
 
   const handleSignIn = async (email: string, passwordPlain: string) => {
     try {
@@ -48,7 +52,7 @@ export const CustomerLoginPage: React.FC = () => {
       <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <Auth
-        title="Welcome to DairyNexa"
+        title={`Welcome to ${dairyName}`}
         subtitle="Sign in to Customer Doorstep Portal"
         onSignInSuccess={handleSignIn}
         onGoogleClick={() => googleLogin()}

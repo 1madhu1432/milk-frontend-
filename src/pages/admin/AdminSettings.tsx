@@ -164,8 +164,8 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => setActiveTab('integrations')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${activeTab === 'integrations'
-              ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Plug className="w-4 h-4 text-emerald-700" />
@@ -176,8 +176,8 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => setActiveTab('automations')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${activeTab === 'automations'
-              ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Zap className="w-4 h-4 text-emerald-700" />
@@ -187,8 +187,8 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => setActiveTab('logs')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${activeTab === 'logs'
-              ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <ScrollText className="w-4 h-4 text-emerald-700" />
@@ -198,8 +198,8 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => setActiveTab('business')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${activeTab === 'business'
-              ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Building2 className="w-4 h-4 text-slate-600" />
@@ -209,8 +209,8 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => setActiveTab('spec')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${activeTab === 'spec'
-              ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <ShieldCheck className="w-4 h-4 text-slate-600" />
@@ -220,8 +220,8 @@ export const AdminSettings: React.FC = () => {
         <button
           onClick={() => setActiveTab('data')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${activeTab === 'data'
-              ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
-              : 'text-slate-600 hover:text-slate-900'
+            ? 'bg-white text-emerald-900 shadow-xs ring-1 ring-slate-200'
+            : 'text-slate-600 hover:text-slate-900'
             }`}
         >
           <Database className="w-4 h-4 text-emerald-700" />
@@ -560,18 +560,16 @@ export const AdminSettings: React.FC = () => {
         <div className="space-y-6 animate-fade-in">
           {/* Active Mode Banner */}
           <div
-            className={`p-5 rounded-2xl border ${
-              isDemoMode
+            className={`p-5 rounded-2xl border ${isDemoMode
                 ? 'bg-amber-50/80 border-amber-200 text-amber-950'
                 : 'bg-emerald-50/80 border-emerald-200 text-emerald-950'
-            }`}
+              }`}
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-start gap-3.5">
                 <div
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${
-                    isDemoMode ? 'bg-amber-500 text-white' : 'bg-emerald-600 text-white'
-                  }`}
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-sm ${isDemoMode ? 'bg-amber-500 text-white' : 'bg-emerald-600 text-white'
+                    }`}
                 >
                   {isDemoMode ? <Sparkles className="w-6 h-6" /> : <CheckCircle2 className="w-6 h-6" />}
                 </div>
@@ -583,11 +581,10 @@ export const AdminSettings: React.FC = () => {
                         : '🟢 Clean Production Mode (Ready for Real Dairy Operations)'}
                     </h3>
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                        isDemoMode
+                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${isDemoMode
                           ? 'bg-amber-200 text-amber-900 border border-amber-300'
                           : 'bg-emerald-200 text-emerald-900 border border-emerald-300'
-                      }`}
+                        }`}
                     >
                       {isDemoMode ? 'Demo Mode' : 'Production Slate'}
                     </span>

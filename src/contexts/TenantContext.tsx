@@ -71,14 +71,67 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return initialTenants;
   });
 
-  // Current active tenant ID (default: DairyNexa)
+  // Current active tenant ID (with automatic URL ?dairy= and subdomain resolution)
   const [currentTenantId, setCurrentTenantId] = useState<string>(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const savedId = localStorage.getItem(CURRENT_TENANT_ID_KEY);
-      if (savedId && savedId !== 'tenant-harish-dairy') return savedId;
+    if (typeof window !== 'undefined') {
+      // 1. Check URL query parameters: ?dairy=xyz or ?tenant=xyz
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const querySlug = urlParams.get('dairy') || urlParams.get('tenant');
+        if (querySlug) {
+          const matched = initialTenants.find(
+            t =>
+              t.id.toLowerCase() === querySlug.toLowerCase() ||
+              t.slug.toLowerCase() === querySlug.toLowerCase() ||
+              t.domainConfig.subdomain.toLowerCase() === querySlug.toLowerCase()
+          );
+          if (matched) return matched.id;
+        }
+
+        // 2. Check Subdomain (e.g. krishna.dairynexa.com)
+        const hostParts = window.location.hostname.split('.');
+        if (hostParts.length > 2 && hostParts[0] !== 'www' && hostParts[0] !== 'localhost') {
+          const subMatched = initialTenants.find(
+            t =>
+              t.domainConfig.subdomain.toLowerCase() === hostParts[0].toLowerCase() ||
+              t.slug.toLowerCase() === hostParts[0].toLowerCase()
+          );
+          if (subMatched) return subMatched.id;
+        }
+      } catch {
+        // ignore url parsing issues
+      }
+
+      // 3. Check saved ID in localStorage
+      if (window.localStorage) {
+        const savedId = localStorage.getItem(CURRENT_TENANT_ID_KEY);
+        if (savedId && savedId !== 'tenant-harish-dairy') return savedId;
+      }
     }
     return 'tenant-dairynexa';
   });
+
+  // Listen to URL query parameter changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const querySlug = urlParams.get('dairy') || urlParams.get('tenant');
+      if (querySlug) {
+        const matched = tenants.find(
+          t =>
+            t.id.toLowerCase() === querySlug.toLowerCase() ||
+            t.slug.toLowerCase() === querySlug.toLowerCase() ||
+            t.domainConfig.subdomain.toLowerCase() === querySlug.toLowerCase()
+        );
+        if (matched && matched.id !== currentTenantId) {
+          setCurrentTenantId(matched.id);
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }, [tenants, currentTenantId]);
 
   // Platform tickets
   const [tickets, setTickets] = useState<PlatformTicket[]>(() => {
