@@ -19,13 +19,16 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Harish Dairy ErrorBoundary caught an error:', error, errorInfo);
+    console.error('DairyNexa ErrorBoundary caught an error:', error, errorInfo);
   }
 
   private handleReset = () => {
     try {
+      localStorage.removeItem('dairynexa_live_production_v1');
+      localStorage.removeItem('dairynexa_session');
       localStorage.removeItem('harish_dairy_app_state_v3');
       localStorage.removeItem('harish_dairy_session');
+      localStorage.removeItem('milkerp_production_live_v2');
     } catch (e) {
       // ignore
     }
@@ -47,7 +50,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <div>
               <h2 className="text-xl font-black text-slate-900 tracking-tight">
-                Harish Dairy System Recovery
+                DairyNexa System Recovery
               </h2>
               <p className="text-xs text-slate-500 mt-1 leading-relaxed">
                 A rendering glitch was detected. Your operational data is safe in local storage.

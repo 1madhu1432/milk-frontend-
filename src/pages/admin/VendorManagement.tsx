@@ -111,7 +111,7 @@ export const VendorManagement: React.FC = () => {
   };
 
   const handleExportVendors = () => {
-    exportToCSV(vendors, 'Harish_Dairy_Vendors_Statement', [
+    exportToCSV(vendors, 'DairyNexa_Vendors_Statement', [
       { key: 'id', label: 'Vendor ID' },
       { key: 'name', label: 'Vendor Name' },
       { key: 'contactNumber', label: 'Phone' },

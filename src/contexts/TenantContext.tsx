@@ -48,9 +48,9 @@ interface TenantContextType {
 
 const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
-const TENANTS_STORAGE_KEY = 'milkerp_multi_tenant_registry_v1';
-const CURRENT_TENANT_ID_KEY = 'milkerp_active_tenant_id_v1';
-const TICKETS_STORAGE_KEY = 'milkerp_platform_tickets_v1';
+const TENANTS_STORAGE_KEY = 'dairynexa_multi_tenant_registry_v2';
+const CURRENT_TENANT_ID_KEY = 'dairynexa_active_tenant_id_v2';
+const TICKETS_STORAGE_KEY = 'dairynexa_platform_tickets_v2';
 
 export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Load tenants registry
@@ -71,13 +71,13 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return initialTenants;
   });
 
-  // Current active tenant ID (default: Harish Dairy Farm)
+  // Current active tenant ID (default: DairyNexa)
   const [currentTenantId, setCurrentTenantId] = useState<string>(() => {
     if (typeof window !== 'undefined' && window.localStorage) {
       const savedId = localStorage.getItem(CURRENT_TENANT_ID_KEY);
-      if (savedId) return savedId;
+      if (savedId && savedId !== 'tenant-harish-dairy') return savedId;
     }
-    return 'tenant-harish-dairy';
+    return 'tenant-dairynexa';
   });
 
   // Platform tickets
@@ -157,7 +157,7 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // Check current session role from localStorage
       if (!bypassRoleCheck && typeof window !== 'undefined') {
         try {
-          const session = JSON.parse(localStorage.getItem('harish_dairy_session') || '{}');
+          const session = JSON.parse(localStorage.getItem('dairynexa_session') || localStorage.getItem('harish_dairy_session') || '{}');
           if (session.role && session.role !== 'super_admin' && session.role !== 'admin') {
             console.warn('Tenant switching restricted: Only Super Admin and authorized testers can switch tenants.');
             return false;
@@ -186,12 +186,12 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       prev.map(t =>
         t.id === tenantId
           ? {
-              ...t,
-              domainConfig: {
-                ...t.domainConfig,
-                ...updates,
-              },
-            }
+            ...t,
+            domainConfig: {
+              ...t.domainConfig,
+              ...updates,
+            },
+          }
           : t
       )
     );
@@ -203,12 +203,12 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       prev.map(t =>
         t.id === tenantId
           ? {
-              ...t,
-              branding: {
-                ...t.branding,
-                ...updates,
-              },
-            }
+            ...t,
+            branding: {
+              ...t.branding,
+              ...updates,
+            },
+          }
           : t
       )
     );
@@ -233,19 +233,19 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         prev.map(t =>
           t.id === tenantId
             ? {
-                ...t,
+              ...t,
+              planId,
+              status: 'active',
+              subscription: {
+                ...t.subscription,
                 planId,
                 status: 'active',
-                subscription: {
-                  ...t.subscription,
-                  planId,
-                  status: 'active',
-                  billingInterval: interval,
-                  currentPeriodStart: now.toISOString(),
-                  currentPeriodEnd: nextMonth.toISOString(),
-                  amountPaid: price,
-                },
-              }
+                billingInterval: interval,
+                currentPeriodStart: now.toISOString(),
+                currentPeriodEnd: nextMonth.toISOString(),
+                amountPaid: price,
+              },
+            }
             : t
         )
       );
@@ -259,13 +259,13 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       prev.map(t =>
         t.id === tenantId
           ? {
-              ...t,
+            ...t,
+            status,
+            subscription: {
+              ...t.subscription,
               status,
-              subscription: {
-                ...t.subscription,
-                status,
-              },
-            }
+            },
+          }
           : t
       )
     );
@@ -374,7 +374,7 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     localStorage.removeItem(CURRENT_TENANT_ID_KEY);
     localStorage.removeItem(TICKETS_STORAGE_KEY);
     setTenants(initialTenants);
-    setCurrentTenantId('tenant-harish-dairy');
+    setCurrentTenantId('tenant-dairynexa');
     setTickets(initialPlatformTickets);
   }, []);
 

@@ -28,16 +28,16 @@ export const LandingPage: React.FC = () => {
 
   const handleQuickDemo = (role: 'admin' | 'employee' | 'customer' | 'super_admin') => {
     if (role === 'admin') {
-      login('admin', 'admin@vallycrm.com', 'Harish Rao (Dairy Owner)', 'user-admin-01');
+      login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
       navigate('/admin/dashboard');
     } else if (role === 'employee') {
       login('employee', 'delivery@dailydairy.demo', 'Suresh Kumar Goud', 'user-deliv-01');
       navigate('/employee/deliveries');
     } else if (role === 'customer') {
-      login('customer', 'customer@dailydairy.demo', 'Rajesh Reddy', 'user-cust-01');
+      login('customer', 'subscriber@dairynexa.com', 'Valued Customer', 'user-cust-01');
       navigate('/customer/home');
     } else if (role === 'super_admin') {
-      login('super_admin', 'platform.owner@milkerp.com', 'MilkerP Platform Owner', 'user-super-01');
+      login('super_admin', 'platform.owner@dairynexa.com', 'DairyNexa Platform Owner', 'user-super-01');
       navigate('/super-admin');
     }
   };
@@ -406,7 +406,7 @@ export const LandingPage: React.FC = () => {
               Turnkey Daily Routine
             </span>
             <h2 className="text-3xl font-black tracking-tight text-white mt-3">
-              How MilkERP Runs Your Daily Business
+              How DairyNexa Runs Your Daily Business
             </h2>
           </div>
 
@@ -433,7 +433,7 @@ export const LandingPage: React.FC = () => {
             </div>
             <div>
               <span className="font-bold text-white text-sm">{currentTenant.name}</span>
-              <p className="text-[11px] text-slate-500">© 2026 MilkERP Platform. All rights reserved.</p>
+              <p className="text-[11px] text-slate-500">© 2026 DairyNexa Platform. All rights reserved.</p>
             </div>
           </div>
 

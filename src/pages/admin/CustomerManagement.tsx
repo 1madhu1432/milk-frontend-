@@ -193,7 +193,7 @@ export const CustomerManagement: React.FC = () => {
   };
 
   const handleExportCSV = () => {
-    exportToCSV(customers, 'Harish_Dairy_Customers_List', [
+    exportToCSV(customers, 'DairyNexa_Customers_List', [
       { key: 'id', label: 'Customer ID' },
       { key: 'name', label: 'Customer Name' },
       { key: 'mobile', label: 'Mobile' },
@@ -219,7 +219,7 @@ export const CustomerManagement: React.FC = () => {
         if (rows.length > 0) {
           const imported: Customer[] = rows.map((r, i) => ({
             id: r['Customer ID'] || `CUST-IMP-${1000 + i}`,
-            tenantId: settings.tenantId || 'tenant-harish-dairy',
+            tenantId: settings.tenantId || 'tenant-dairynexa',
             name: r['Customer Name'] || 'Imported Customer',
             mobile: r['Mobile'] || '+91 98490 00000',
             whatsapp: r['Mobile'] || '+91 98490 00000',

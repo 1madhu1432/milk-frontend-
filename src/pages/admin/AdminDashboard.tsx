@@ -182,7 +182,7 @@ export const AdminDashboard: React.FC = () => {
                 Live Dispatch Active
               </span>
               <span className="text-xs text-slate-400 font-medium">
-                {settings?.dairyName || 'Harish Dairy'} • Hyderabad Metro Division
+                {settings?.dairyName || 'DairyNexa'} • Operations Division
               </span>
             </div>
 

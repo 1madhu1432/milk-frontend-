@@ -32,7 +32,7 @@ export const EmployeeLayout: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-black text-sm text-slate-900 tracking-tight">Harish Dairy</span>
+                <span className="font-black text-sm text-slate-900 tracking-tight">DairyNexa</span>
                 <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-300">
                   Rider
                 </span>

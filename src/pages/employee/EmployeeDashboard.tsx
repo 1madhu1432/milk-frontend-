@@ -86,7 +86,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
 
   const fallbackRoute: Route = useMemo(() => ({
     id: selectedRouteId || 'ROUTE-EMPTY',
-    tenantId: 'tenant-harish-dairy',
+    tenantId: 'tenant-dairynexa',
     name: 'No Active Route Assigned',
     area: 'Unassigned Area',
     assignedEmployeeIds: [],
@@ -924,7 +924,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                 Staff ID: {currentUser.id || 'EMP-02'}
               </span>
             </div>
-            <p className="text-xs text-slate-500 font-semibold">Delivery Partner • Harish Dairy Fleet</p>
+            <p className="text-xs text-slate-500 font-semibold">Delivery Partner • DairyNexa Fleet</p>
           </div>
 
           <div className="bg-white p-4 rounded-3xl border border-slate-200/90 shadow-2xs space-y-3 text-xs">

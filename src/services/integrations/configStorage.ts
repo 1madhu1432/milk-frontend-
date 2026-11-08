@@ -22,7 +22,7 @@ export const initialIntegrationsState: IntegrationsState = {
     webhookSecret: '',
     autoCapture: true,
     currency: 'INR',
-    merchantName: 'Harish Dairy Farm',
+    merchantName: 'DairyNexa',
     themeColor: '#16803D',
     enabled: false,
     status: 'not_configured',
@@ -47,9 +47,9 @@ export const initialIntegrationsState: IntegrationsState = {
     id: 'email',
     name: 'Email Delivery (SMTP / Transactional)',
     provider: 'smtp',
-    fromName: 'Harish Dairy Accounts',
-    fromEmail: 'billing@harishdairy.in',
-    replyToEmail: 'support@harishdairy.in',
+    fromName: 'DairyNexa Accounts',
+    fromEmail: 'billing@dairynexa.in',
+    replyToEmail: 'support@dairynexa.in',
     smtpHost: 'smtp.sendgrid.net',
     smtpPort: 587,
     smtpUser: 'apikey',
@@ -175,10 +175,10 @@ export const initialUnifiedLogs: UnifiedNotificationLog[] = [
     recipient: '+91 98234 56789',
     channel: 'sms',
     eventType: 'delivery_completed',
-    provider: 'MSG91 (DLT: HRSHDY)',
+    provider: 'MSG91 (DLT: DNXDRY)',
     status: 'Delivered',
     providerMessageId: 'msg_91_dlt_778219028',
-    payloadSummary: 'Harish Dairy: 2L Cow milk delivered. DLT Template: 1107161234567890123',
+    payloadSummary: 'DairyNexa: 2L Cow milk delivered. DLT Template: 1107161234567890123',
     idempotencyKey: 'delivery_completed_DEL-2026-11-01-001_sms',
     retryCount: 0,
     relatedEntityId: 'DEL-2026-11-01-001',
@@ -315,7 +315,7 @@ export function validateEmailConfig(config: EmailConfig): { isValid: boolean; er
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   if (!config.fromEmail?.trim() || !emailRegex.test(config.fromEmail.trim())) {
-    errors.push('Valid Sender From Email address is required (e.g. billing@harishdairy.in)');
+    errors.push('Valid Sender From Email address is required (e.g. billing@dairynexa.com)');
   }
 
   if (!config.fromName?.trim()) {

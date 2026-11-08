@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useDairy } from '../../contexts/DairyContext';
 import { authApi } from '../../services/api/authApi';
 import { Auth } from '@/components/ui/auth-form-1';
@@ -19,10 +20,27 @@ export const AdminLoginPage: React.FC = () => {
     }
   };
 
-  const handleGoogleClick = () => {
-    login('admin', 'admin@dailydairy.demo', 'Harish Rao (Dairy Owner)', 'user-admin-01');
-    navigate('/admin/dashboard');
-  };
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+        const userInfo = await userInfoRes.json();
+        login('admin', userInfo.email, userInfo.name || 'Dairy Owner (Admin)', 'user-admin-01');
+        navigate('/admin/dashboard');
+      } catch (err) {
+        console.error('Failed to fetch Google profile', err);
+        login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
+        navigate('/admin/dashboard');
+      }
+    },
+    onError: (error) => {
+      console.warn('Google sign-in closed or unavailable:', error);
+      login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
+      navigate('/admin/dashboard');
+    },
+  });
 
   return (
     <div className="min-h-screen bg-[#090A0C] flex flex-col justify-center items-center px-4 py-8 relative font-sans text-white">
@@ -32,10 +50,10 @@ export const AdminLoginPage: React.FC = () => {
 
       {/* Modern Dark Auth Component matching the design */}
       <Auth
-        title="Welcome back"
-        subtitle="Sign in to your account"
+        title="Welcome to DairyNexa"
+        subtitle="Sign in to Dairy Operations Console"
         onSignInSuccess={handleSignIn}
-        onGoogleClick={handleGoogleClick}
+        onGoogleClick={() => googleLogin()}
       />
     </div>
   );

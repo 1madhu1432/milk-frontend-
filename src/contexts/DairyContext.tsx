@@ -130,7 +130,7 @@ interface DairyContextType {
 
 const DairyContext = createContext<DairyContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'milkerp_production_live_v2';
+const STORAGE_KEY = 'dairynexa_live_production_v1';
 
 function emitBusinessEvent(eventType: string, detail: Record<string, any>) {
   if (typeof window !== 'undefined') {
@@ -144,18 +144,25 @@ function loadInitialState() {
     localStorage.removeItem('harish_dairy_app_state_v3');
     localStorage.removeItem('harish_dairy_app_state_v2');
     localStorage.removeItem('harish_dairy_state_v2');
+    localStorage.removeItem('harish_dairy_session');
     localStorage.removeItem('milkerp_data_mode');
     localStorage.removeItem('milkerp_clean_production_state_v1');
     localStorage.removeItem('milkerp_public_live_state_v1');
+    localStorage.removeItem('milkerp_production_live_v2');
 
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (parsed) {
+          const loadedSettings = {
+            ...initialBusinessSettings,
+            ...(parsed.settings || {}),
+            dairyName: 'DairyNexa',
+          };
           return {
             isDemoMode: false,
-            settings: parsed.settings || initialBusinessSettings,
+            settings: loadedSettings,
             routes: parsed.routes || [],
             employees: parsed.employees || [],
             vendors: parsed.vendors || [],
@@ -207,7 +214,7 @@ function loadInitialState() {
 export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Session
   const [currentUser, setCurrentUser] = useState<UserSession>(() => {
-    const saved = localStorage.getItem('harish_dairy_session');
+    const saved = localStorage.getItem('dairynexa_session');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -433,7 +440,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Save session
   useEffect(() => {
-    localStorage.setItem('harish_dairy_session', JSON.stringify(currentUser));
+    localStorage.setItem('dairynexa_session', JSON.stringify(currentUser));
   }, [currentUser]);
 
   // Calculate current milk stock from transactions
@@ -462,7 +469,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const logout = () => {
-    localStorage.removeItem('harish_dairy_session');
+    localStorage.removeItem('dairynexa_session');
     localStorage.removeItem('milkerp_access_token');
     localStorage.removeItem('milkerp_refresh_token');
     localStorage.removeItem('milkerp_active_tenant_id');
@@ -493,7 +500,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newCust: Customer = {
       ...custData,
       id: newId,
-      tenantId: custData.tenantId || settings.tenantId || 'tenant-harish-dairy',
+      tenantId: custData.tenantId || settings.tenantId || 'tenant-dairynexa',
       outstandingBalance: custData.outstandingBalance || 0,
     };
     setCustomers(prev => [newCust, ...prev]);
@@ -587,7 +594,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Employee
   const addEmployee = (emp: Omit<Employee, 'id' | 'tenantId'> & { tenantId?: string }) => {
     const newId = `EMP-0${employees.length + 1}`;
-    const newEmp = { ...emp, id: newId, tenantId: emp.tenantId || settings.tenantId || 'tenant-harish-dairy' };
+    const newEmp = { ...emp, id: newId, tenantId: emp.tenantId || settings.tenantId || 'tenant-dairynexa' };
     setEmployees(prev => [...prev, newEmp]);
     adminApi.createEmployee(newEmp).catch(err => console.debug('Backend note:', err?.message));
   };
@@ -605,7 +612,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Routes
   const addRoute = (route: Omit<Route, 'id' | 'tenantId'> & { tenantId?: string }) => {
     const newId = `ROUTE-${routes.length + 1}`;
-    const newRoute = { ...route, id: newId, tenantId: route.tenantId || settings.tenantId || 'tenant-harish-dairy' };
+    const newRoute = { ...route, id: newId, tenantId: route.tenantId || settings.tenantId || 'tenant-dairynexa' };
     setRoutes(prev => [...prev, newRoute]);
     adminApi.createRoute(newRoute).catch(err => console.debug('Backend note:', err?.message));
   };
@@ -626,7 +633,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newVen = {
       ...vendor,
       id: newId,
-      tenantId: vendor.tenantId || settings.tenantId || 'tenant-harish-dairy',
+      tenantId: vendor.tenantId || settings.tenantId || 'tenant-dairynexa',
       totalMilkPurchased: 0,
       totalPurchaseValue: 0,
       totalAmountPaid: 0,
@@ -645,7 +652,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newPayment: VendorPayment = {
       ...payment,
       id: generateId('VP'),
-      tenantId: payment.tenantId || settings.tenantId || 'tenant-harish-dairy',
+      tenantId: payment.tenantId || settings.tenantId || 'tenant-dairynexa',
     };
     setVendorPayments(prev => [newPayment, ...prev]);
     adminApi.recordVendorPayment(newPayment).catch(err => console.debug('Backend note:', err?.message));
@@ -667,7 +674,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Purchases
   const addMilkPurchase = (purchase: Omit<MilkPurchase, 'id' | 'tenantId'> & { tenantId?: string }) => {
     const newId = `PUR-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.floor(10 + Math.random() * 90)}`;
-    const targetTenant = purchase.tenantId || settings.tenantId || 'tenant-harish-dairy';
+    const targetTenant = purchase.tenantId || settings.tenantId || 'tenant-dairynexa';
     const newPurchase: MilkPurchase = { ...purchase, id: newId, tenantId: targetTenant };
     setMilkPurchases(prev => [newPurchase, ...prev]);
     adminApi.createPurchase(newPurchase).catch(err => console.debug('Backend note:', err?.message));
@@ -676,7 +683,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (newPurchase.acceptedQuantity > 0) {
       const stockTx: StockTransaction = {
         id: generateId('STK'),
-        tenantId: purchase.tenantId || settings.tenantId || 'tenant-harish-dairy',
+        tenantId: purchase.tenantId || settings.tenantId || 'tenant-dairynexa',
         date: newPurchase.date,
         type: 'Purchase Receipt',
         milkTypeOrProduct: newPurchase.milkType,
@@ -735,7 +742,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     }
 
-    const newTx: StockTransaction = { ...tx, id: generateId('STK'), tenantId: tx.tenantId || settings.tenantId || 'tenant-harish-dairy' };
+    const newTx: StockTransaction = { ...tx, id: generateId('STK'), tenantId: tx.tenantId || settings.tenantId || 'tenant-dairynexa' };
     setStockTransactions(prev => [newTx, ...prev]);
     return { success: true };
   };
@@ -821,7 +828,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newReq: PauseRequest = {
       ...req,
       id: generateId('PAUSE'),
-      tenantId: req.tenantId || settings.tenantId || 'tenant-harish-dairy',
+      tenantId: req.tenantId || settings.tenantId || 'tenant-dairynexa',
       requestDate: new Date().toISOString().slice(0, 10),
       status: 'Pending',
     };
@@ -850,7 +857,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Products & Orders
   const addProduct = (prod: Omit<Product, 'id' | 'tenantId'> & { tenantId?: string }) => {
     const newId = `PROD-0${products.length + 1}`;
-    const newProd = { ...prod, id: newId, tenantId: prod.tenantId || settings.tenantId || 'tenant-harish-dairy' };
+    const newProd = { ...prod, id: newId, tenantId: prod.tenantId || settings.tenantId || 'tenant-dairynexa' };
     setProducts(prev => [...prev, newProd]);
     adminApi.createProduct(newProd).catch(err => console.debug(err));
   };
@@ -870,7 +877,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newOrder: ProductOrder = {
       ...order,
       id: newId,
-      tenantId: order.tenantId || settings.tenantId || 'tenant-harish-dairy',
+      tenantId: order.tenantId || settings.tenantId || 'tenant-dairynexa',
       orderDate: new Date().toISOString().slice(0, 10),
       status: 'Confirmed',
     };
@@ -925,7 +932,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       const invoice: Invoice = {
         id: invId,
         invoiceNumber: invNum,
-        tenantId: cust.tenantId || settings.tenantId || 'tenant-harish-dairy',
+        tenantId: cust.tenantId || settings.tenantId || 'tenant-dairynexa',
         customerId: cust.id,
         customerName: cust.name,
         customerMobile: cust.mobile,
@@ -999,7 +1006,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const newPayment: CustomerPayment = {
       ...paymentData,
       id: generateId('PAY'),
-      tenantId: paymentData.tenantId || settings.tenantId || 'tenant-harish-dairy',
+      tenantId: paymentData.tenantId || settings.tenantId || 'tenant-dairynexa',
     };
     setCustomerPayments(prev => [newPayment, ...prev]);
 
@@ -1062,7 +1069,7 @@ export const DairyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     const newLog: NotificationLog = {
       id: generateId('NOTIF'),
-      tenantId: inv.tenantId || settings.tenantId || 'tenant-harish-dairy',
+      tenantId: inv.tenantId || settings.tenantId || 'tenant-dairynexa',
       customerId: inv.customerId,
       customerName: inv.customerName,
       mobile: cust ? cust.mobile : '',

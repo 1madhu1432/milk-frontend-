@@ -219,7 +219,7 @@ export const RouteManagement: React.FC = () => {
               <div className="border-b-2 border-slate-900 pb-3 flex justify-between items-start">
                 <div>
                   <h2 className="text-lg font-bold text-slate-900 uppercase">
-                    Harish Dairy — Morning Delivery Manifest
+                    DairyNexa — Morning Delivery Manifest
                   </h2>
                   <p className="text-xs text-slate-600">
                     Route: {selectedRoute.name} • Area: {selectedRoute.area}

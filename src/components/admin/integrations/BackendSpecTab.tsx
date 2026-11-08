@@ -28,7 +28,7 @@ export const BackendSpecTab: React.FC = () => {
 PORT=5000
 NODE_ENV=production
 APP_SECRET=milkerp_jwt_secret_min_32_characters_long
-ALLOWED_ORIGIN=https://app.harishdairy.in
+ALLOWED_ORIGIN=https://app.dairynexa.in
 
 # ------------------------------------------------------------------------------
 # 1. Razorpay Payment Gateway
@@ -53,8 +53,8 @@ SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
 SMTP_USER=apikey
 SMTP_PASSWORD=SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-SMTP_FROM_EMAIL=billing@harishdairy.in
-SMTP_FROM_NAME="Harish Dairy Farm Accounts"
+SMTP_FROM_EMAIL=billing@dairynexa.in
+SMTP_FROM_NAME="DairyNexa Accounts"
 
 # ------------------------------------------------------------------------------
 # 4. SMS Gateway (Indian TRAI DLT Compliant)

@@ -132,7 +132,7 @@ export class NotificationService {
               toName: customer.name,
               subject,
               html: `<div style="font-family:sans-serif;padding:20px;border:1px solid #e2e8f0;border-radius:12px;">
-                <h3 style="color:#16803d;margin-top:0;">Harish Dairy Farm</h3>
+                <h3 style="color:#16803d;margin-top:0;">DairyNexa</h3>
                 <p>Hello <strong>${customer.name}</strong>,</p>
                 <p>${summary}</p>
                 <div style="margin-top:20px;font-size:12px;color:#64748b;">
@@ -264,7 +264,7 @@ export class NotificationService {
           {
             recipient: log.recipient,
             templateName: 'dairy_retry_alert_v1',
-            textFallback: log.payloadSummary || 'Harish Dairy Notification Retry',
+            textFallback: log.payloadSummary || 'DairyNexa Notification Retry',
           },
           integrations.whatsapp
         );
@@ -274,7 +274,7 @@ export class NotificationService {
         const res = await EmailIntegrationService.sendEmail(
           {
             to: log.recipient,
-            subject: 'Harish Dairy Notification (Retry)',
+            subject: 'DairyNexa Notification (Retry)',
             html: `<p>${log.payloadSummary}</p>`,
           },
           integrations.email
@@ -328,24 +328,24 @@ export class NotificationService {
       case 'order_update':
         return `Your order ${data.order?.id || ''} for ${data.order?.items?.map(i => `${i.quantity}x ${i.productName}`).join(', ') || 'dairy products'} is confirmed. Total: ₹${data.order?.totalAmount || 0}.`;
       default:
-        return 'Harish Dairy updates notification.';
+        return 'DairyNexa updates notification.';
     }
   }
 
   private static getEmailSubject(eventType: NotificationEventType, data: DispatchEventOptions['data']): string {
     switch (eventType) {
       case 'delivery_completed':
-        return 'Delivery Completed — Harish Dairy';
+        return 'Delivery Completed — DairyNexa';
       case 'invoice_generated':
         return `Monthly Dairy Bill (${data.invoice?.monthLabel || ''}) — Invoice #${data.invoice?.invoiceNumber || ''}`;
       case 'payment_received':
-        return `Payment Receipt ₹${data.payment?.amount || 0} — Harish Dairy`;
+        return `Payment Receipt ₹${data.payment?.amount || 0} — DairyNexa`;
       case 'payment_overdue':
-        return 'Payment Due Reminder — Harish Dairy';
+        return 'Payment Due Reminder — DairyNexa';
       case 'order_update':
-        return `Order Confirmed: #${data.order?.id || ''} — Harish Dairy`;
+        return `Order Confirmed: #${data.order?.id || ''} — DairyNexa`;
       default:
-        return 'Notification from Harish Dairy';
+        return 'Notification from DairyNexa';
     }
   }
 

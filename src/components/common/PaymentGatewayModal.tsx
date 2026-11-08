@@ -51,7 +51,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
   customerMobile,
   invoiceId,
   invoiceNumber,
-  title = 'Harish Dairy Payment Gateway',
+  title = 'DairyNexa Payment Gateway',
   description = 'Instant automated settlement via secure payment gateway',
   onSuccess,
 }) => {
@@ -171,7 +171,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
           key: activeKey,
           amount: Math.round(amount * 100), // In paise
           currency: 'INR',
-          name: 'Harish Dairy',
+          name: 'DairyNexa',
           description: invoiceNumber ? `Payment for Bill ${invoiceNumber}` : 'Milk Subscription Balance Settlement',
           image: 'https://cdn-icons-png.flaticon.com/512/3050/3050158.png',
           handler: function (response: any) {
@@ -194,14 +194,14 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
           prefill: {
             name: customerName || 'Dairy Customer',
             contact: customerMobile || '',
-            email: 'customer@harishdairy.in',
+            email: 'customer@dairynexa.in',
             method: preferredMethod,
           },
           notes: {
             customerName,
             customerMobile: customerMobile || '',
             invoiceNumber: invoiceNumber || '',
-            dairyApp: 'Harish Dairy Management System',
+            dairyApp: 'DairyNexa Management System',
           },
           theme: {
             color: '#16803D',
@@ -253,7 +253,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
       method: 'UPI',
       amount,
       date: new Date().toISOString().slice(0, 10),
-      notes: `Settled via Harish Dairy Payment Gateway (${completedPayment.methodLabel})`,
+      notes: `Settled via DairyNexa Payment Gateway (${completedPayment.methodLabel})`,
     });
     onClose();
   };
@@ -273,7 +273,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-extrabold tracking-tight">Harish Dairy Payment Gateway</h3>
+                <h3 className="text-sm font-extrabold tracking-tight">DairyNexa Payment Gateway</h3>
                 <span className="text-[10px] bg-emerald-400/20 text-emerald-200 border border-emerald-400/30 px-1.5 py-0.2 rounded font-bold uppercase tracking-wider">
                   256-bit SSL
                 </span>
@@ -516,7 +516,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                           <div className="w-3 h-3 bg-white" />
                         </div>
                         <div className="w-6 h-6 border-2 border-emerald-400 bg-emerald-500/30 flex items-center justify-center text-[8px] text-white font-mono">
-                          HD
+                          DNX
                         </div>
                       </div>
                     </div>
@@ -796,7 +796,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                 <Lock className="w-3.5 h-3.5 text-slate-400" />
                 256-Bit End-to-End Encrypted Checkout
               </span>
-              <span className="font-mono text-slate-400">HARISH-PG</span>
+              <span className="font-mono text-slate-400">DAIRYNEXA-PG</span>
             </div>
           </div>
         )}
@@ -822,7 +822,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
 
             <div className="max-w-xs bg-slate-50 p-3 rounded-xl border text-[11px] text-slate-600 space-y-1">
               <p>• Do not press back or refresh this screen</p>
-              <p>• Transacting with Harish Dairy Merchant Account</p>
+              <p>• Transacting with DairyNexa Merchant Account</p>
             </div>
           </div>
         )}
@@ -843,7 +843,7 @@ export const PaymentGatewayModal: React.FC<PaymentGatewayModalProps> = ({
                 {formatCurrency(amount)}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Paid to Harish Dairy & Farm Logistics
+                Paid to DairyNexa Operations
               </p>
             </div>
 

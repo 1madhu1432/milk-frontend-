@@ -227,7 +227,7 @@ export const WhatsAppNotifications: React.FC = () => {
               <div className="flex justify-between">
                 <span className="text-slate-500">WhatsApp Gateway:</span>
                 <span className="font-semibold text-emerald-700">
-                  {whatsappConfig.provider === 'meta_cloud_api' ? 'Meta Cloud API' : whatsappConfig.provider.toUpperCase()} ({whatsappConfig.fromPhoneNumber || 'Harish Dairy Official'})
+                  {whatsappConfig.provider === 'meta_cloud_api' ? 'Meta Cloud API' : whatsappConfig.provider.toUpperCase()} ({whatsappConfig.fromPhoneNumber || 'DairyNexa Official'})
                 </span>
               </div>
               <div className="flex justify-between">
@@ -269,7 +269,7 @@ export const WhatsAppNotifications: React.FC = () => {
                 🥛
               </div>
               <div>
-                <p className="text-xs font-bold leading-tight">Harish Dairy (Official)</p>
+                <p className="text-xs font-bold leading-tight">DairyNexa (Official)</p>
                 <p className="text-[10px] text-emerald-400">Verified Business Account</p>
               </div>
             </div>

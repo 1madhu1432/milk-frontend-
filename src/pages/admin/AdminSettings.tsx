@@ -594,7 +594,7 @@ export const AdminSettings: React.FC = () => {
                   </div>
                   <p className="text-xs text-slate-600 mt-1 max-w-2xl leading-relaxed">
                     {isDemoMode
-                      ? 'The application is currently pre-loaded with 150 simulated customer accounts (e.g., Rajesh Reddy, Harish Rao), 5 routes, and mock billing history for evaluation. To start running your dairy with your real customers and routes, click "Clear Dummy Data & Start Clean" below.'
+                      ? 'The application is in demo mode with evaluation accounts. To run your dairy with real customers and routes, click "Clear Dummy Data & Start Clean" below.'
                       : 'You are running with a clean, unpolluted workspace. All customers, routes, delivery orders, milk procurement logs, and invoices reflect real data entered by you.'}
                   </p>
                 </div>
@@ -721,7 +721,7 @@ export const AdminSettings: React.FC = () => {
                         const parsed = JSON.parse(event.target?.result as string);
                         if (parsed.customers && Array.isArray(parsed.customers)) {
                           localStorage.setItem('milkerp_data_mode', 'clean');
-                          localStorage.setItem('harish_dairy_app_state_v3', JSON.stringify(parsed));
+                          localStorage.setItem('dairynexa_live_production_v1', JSON.stringify(parsed));
                           alert(`Successfully imported ${parsed.customers.length} customers and operational data! Reloading...`);
                           window.location.reload();
                         } else {

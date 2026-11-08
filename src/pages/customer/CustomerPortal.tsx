@@ -76,7 +76,7 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({ defaultTab }) =>
       id: currentUser.id || 'CUST-MEM-01',
       name: currentUser.name || 'Valued Subscriber',
       mobile: '+91 98000 00000',
-      email: currentUser.email || 'subscriber@harishdairy.com',
+      email: currentUser.email || 'subscriber@dairynexa.com',
       houseNo: 'House #42',
       street: 'Dairy Enclave',
       area: 'Outer Ring Road',
@@ -570,17 +570,17 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({ defaultTab }) =>
                   </div>
                 )}
 
-                {/* Instant Sandbox Payment Tester */}
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                {/* Quick Advance Deposit */}
+                <div className="p-3 bg-emerald-50/50 border border-emerald-100 rounded-2xl space-y-2">
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="font-bold text-slate-700 flex items-center gap-1">
-                      <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Test Gateway Sandbox:</span>
+                      <CreditCard className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Quick Advance Deposit:</span>
                     </span>
-                    <span className="text-emerald-700 font-bold text-[10px]">Test Mode Active</span>
+                    <span className="text-emerald-700 font-bold text-[10px]">Instant Wallet Credit</span>
                   </div>
                   <div className="grid grid-cols-3 gap-1.5">
-                    {[100, 500, 1000].map(amt => (
+                    {[200, 500, 1000].map(amt => (
                       <button
                         key={amt}
                         type="button"
@@ -588,7 +588,7 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({ defaultTab }) =>
                           setGatewayModal({
                             isOpen: true,
                             amount: amt,
-                            title: `Advance Deposit / Test Payment (${formatCurrency(amt)})`,
+                            title: `Advance Deposit (${formatCurrency(amt)})`,
                           })
                         }
                         className="py-1.5 px-2 bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-lg text-slate-800 hover:text-emerald-900 font-bold text-xs transition-all cursor-pointer text-center shadow-2xs"
@@ -1132,7 +1132,7 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({ defaultTab }) =>
                 </div>
 
                 <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2">
-                  <p className="font-black text-emerald-950">Harish Dairy Operations Support</p>
+                  <p className="font-black text-emerald-950">DairyNexa Operations Support</p>
                   <p className="text-[11px] text-emerald-800">
                     Need immediate changes to your delivery or need extra curd/paneer dropped off tomorrow? Call our 24/7 hotline:
                   </p>

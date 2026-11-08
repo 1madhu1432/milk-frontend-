@@ -478,7 +478,7 @@ export const PaymentManagement: React.FC = () => {
           <div className="space-y-4 text-xs font-sans">
             <div className="border border-slate-300 p-6 rounded-xl bg-white space-y-3">
               <div className="text-center border-b pb-3">
-                <h3 className="text-base font-bold text-slate-900">HARISH DAIRY</h3>
+                <h3 className="text-base font-bold text-slate-900">DAIRYNEXA</h3>
                 <p className="text-[11px] text-slate-500">OFFICIAL MONEY RECEIPT & ACKNOWLEDGEMENT</p>
               </div>
 
@@ -518,7 +518,7 @@ export const PaymentManagement: React.FC = () => {
               </div>
 
               <div className="pt-4 border-t text-center text-[10px] text-slate-400">
-                This is a computer-generated money receipt from Harish Dairy Operations.
+                This is a computer-generated money receipt from DairyNexa Operations.
               </div>
             </div>
 

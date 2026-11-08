@@ -40,7 +40,7 @@ export const CustomerLayout: React.FC = () => {
     { label: 'My Profile', path: '/customer/profile', icon: User },
   ];
 
-  const dairyName = settings?.dairyName || 'Harish Dairy Farm';
+  const dairyName = settings?.dairyName || 'DairyNexa';
   const customerName = customer?.name || currentUser?.name || 'Valued Subscriber';
   const customerAddress = customer ? `${customer.houseNo}, ${customer.area}` : 'Daily Doorstep Delivery';
   const outstandingDue = customer?.outstandingBalance || 0;

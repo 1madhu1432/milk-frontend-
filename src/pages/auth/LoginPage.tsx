@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useTenant } from '../../contexts/TenantContext';
 import { useDairy } from '../../contexts/DairyContext';
 import {
@@ -36,20 +37,49 @@ export const LoginPage: React.FC = () => {
   const { currentTenant } = useTenant();
   const { login } = useDairy();
 
+  const [activeRoleForGoogle, setActiveRoleForGoogle] = useState<'admin' | 'employee' | 'customer' | 'auto'>('auto');
+
   const handleOpenGoogleForRole = (role: 'admin' | 'employee' | 'customer' | 'auto') => {
     if (role === 'admin') {
-      login('admin', 'admin@dailydairy.demo', 'Harish Rao (Dairy Owner)', 'user-admin-01');
+      login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
       navigate('/admin/dashboard');
     } else if (role === 'employee') {
-      login('employee', 'delivery@dailydairy.demo', 'Suresh Kumar Goud', 'user-deliv-01');
+      login('employee', 'delivery@dairynexa.com', 'Delivery Staff', 'user-deliv-01');
       navigate('/employee/deliveries');
     } else if (role === 'customer') {
-      login('customer', 'customer@dailydairy.demo', 'Rajesh Reddy', 'user-cust-01');
+      login('customer', 'customer@dairynexa.com', 'Valued Subscriber', 'user-cust-01');
       navigate('/customer/home');
     } else {
-      login('admin', 'admin@dailydairy.demo', 'Harish Rao (Dairy Owner)', 'user-admin-01');
+      login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
       navigate('/admin/dashboard');
     }
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        });
+        const userInfo = await userInfoRes.json();
+        const role = activeRoleForGoogle === 'auto' ? 'admin' : activeRoleForGoogle;
+        login(role, userInfo.email, userInfo.name || 'User', `user-${role}-01`);
+        if (role === 'admin') navigate('/admin/dashboard');
+        else if (role === 'employee') navigate('/employee/deliveries');
+        else if (role === 'customer') navigate('/customer/home');
+        else navigate('/admin/dashboard');
+      } catch (err) {
+        handleOpenGoogleForRole(activeRoleForGoogle);
+      }
+    },
+    onError: () => {
+      handleOpenGoogleForRole(activeRoleForGoogle);
+    },
+  });
+
+  const triggerGoogleAuth = (role: 'admin' | 'employee' | 'customer' | 'auto') => {
+    setActiveRoleForGoogle(role);
+    googleLogin();
   };
 
   const modules = [
@@ -127,7 +157,7 @@ export const LoginPage: React.FC = () => {
           🥛
         </div>
         <div className="flex items-center justify-center gap-2 mb-1">
-          <h1 className="text-3xl font-black tracking-tight text-white">MilkerP SaaS Portals</h1>
+          <h1 className="text-3xl font-black tracking-tight text-white">DairyNexa SaaS Portals</h1>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
             Dedicated Login Pages
           </span>
@@ -139,7 +169,7 @@ export const LoginPage: React.FC = () => {
         {/* Central 1-Click Google Sign In Bar */}
         <div className="mt-4 max-w-md mx-auto">
           <button
-            onClick={() => handleOpenGoogleForRole('auto')}
+            onClick={() => triggerGoogleAuth('auto')}
             className="w-full bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs py-2.5 px-4 rounded-xl border border-white/40 shadow-lg flex items-center justify-center gap-2.5 transition-all cursor-pointer group"
           >
             <GoogleLogoSvg className="w-4 h-4 group-hover:scale-105 transition-transform" />
@@ -202,7 +232,7 @@ export const LoginPage: React.FC = () => {
               {m.role && (
                 <button
                   type="button"
-                  onClick={() => handleOpenGoogleForRole(m.role)}
+                  onClick={() => triggerGoogleAuth(m.role)}
                   className="w-full py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[11px] font-bold border border-slate-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <GoogleLogoSvg className="w-3 h-3" />
@@ -215,7 +245,7 @@ export const LoginPage: React.FC = () => {
       </div>
 
       <div className="mt-6 text-center text-xs text-slate-400 relative z-10 font-medium space-y-1">
-        <div>© 2026 MilkerP SaaS • Complete Multi-Tenant Architecture</div>
+        <div>© 2026 DairyNexa Platform • Complete Multi-Tenant Architecture</div>
         <div className="text-[11px] text-slate-500">
           Individual URLs: <span className="text-emerald-400 font-mono">/login/admin</span> • <span className="text-blue-400 font-mono">/login/customer</span> • <span className="text-teal-400 font-mono">/login/delivery</span> • <span className="text-purple-400 font-mono">/login/super-admin</span>
         </div>

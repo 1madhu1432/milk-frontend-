@@ -455,7 +455,7 @@ export const MonthlyBilling: React.FC = () => {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-slate-700">Authorized Signature</p>
-                  <p className="text-[10px] italic">Harish Dairy Operations</p>
+                  <p className="text-[10px] italic">DairyNexa Operations</p>
                 </div>
               </div>
             </div>

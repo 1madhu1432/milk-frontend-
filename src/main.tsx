@@ -6,7 +6,7 @@ import App from './App.tsx';
 
 const googleClientId =
   (import.meta.env.VITE_GOOGLE_CLIENT_ID as string) ||
-  '100000000000-dummygoogleclientid.apps.googleusercontent.com';
+  '271702777005-00eumkgiikl61grbimuc42di5vop5d85.apps.googleusercontent.com';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

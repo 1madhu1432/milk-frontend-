@@ -30,13 +30,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           email,
           name,
           role: 'CUSTOMER',
-          tenantId: 'tenant-harish-dairy',
+          tenantId: 'tenant-dairynexa',
           exp: Math.floor(Date.now() / 1000) + 86400 * 30,
         };
         const b64 = btoa(JSON.stringify(demoPayload));
         const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
         localStorage.setItem('milkerp_access_token', mockJwt);
-        localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
+        localStorage.setItem('milkerp_active_tenant_id', 'tenant-dairynexa');
         login('customer', email, name, 'user-cust-01');
       }
     }
@@ -44,20 +44,20 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     // 2. Delivery Rider Portal: Open directly with Delivery Staff session
     if (path.startsWith('/employee') || path.startsWith('/delivery')) {
       if (!token || currentUser.role !== 'employee') {
-        const email = currentUser.email || 'delivery@milkerp.com';
+        const email = currentUser.email || 'delivery@dairynexa.com';
         const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Delivery Staff';
         const demoPayload = {
           userId: 'user-deliv-01',
           email,
           name,
           role: 'DELIVERY_BOY',
-          tenantId: 'tenant-harish-dairy',
+          tenantId: 'tenant-dairynexa',
           exp: Math.floor(Date.now() / 1000) + 86400 * 30,
         };
         const b64 = btoa(JSON.stringify(demoPayload));
         const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
         localStorage.setItem('milkerp_access_token', mockJwt);
-        localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
+        localStorage.setItem('milkerp_active_tenant_id', 'tenant-dairynexa');
         login('employee', email, name, 'user-deliv-01');
       }
     }
@@ -65,20 +65,20 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     // 3. Admin Portal: Open directly with Admin session
     if (path.startsWith('/admin')) {
       if (!token || (currentUser.role !== 'admin' && currentUser.role !== 'super_admin')) {
-        const email = currentUser.email || 'admin@vallycrm.com';
+        const email = currentUser.email || 'admin@dairynexa.com';
         const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Administrator';
         const demoPayload = {
           userId: 'user-admin-vally',
           email,
           name,
           role: 'ADMIN',
-          tenantId: 'tenant-harish-dairy',
+          tenantId: 'tenant-dairynexa',
           exp: Math.floor(Date.now() / 1000) + 86400 * 30,
         };
         const b64 = btoa(JSON.stringify(demoPayload));
         const mockJwt = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${b64}.mocksignature`;
         localStorage.setItem('milkerp_access_token', mockJwt);
-        localStorage.setItem('milkerp_active_tenant_id', 'tenant-harish-dairy');
+        localStorage.setItem('milkerp_active_tenant_id', 'tenant-dairynexa');
         login('admin', email, name, 'user-admin-vally');
       }
     }

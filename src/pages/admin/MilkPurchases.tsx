@@ -496,7 +496,7 @@ export const MilkPurchases: React.FC = () => {
           <div className="space-y-4 text-xs font-sans">
             <div className="border border-slate-300 p-6 rounded-xl bg-white space-y-3">
               <div className="text-center border-b pb-3">
-                <h3 className="text-base font-bold text-slate-900">HARISH DAIRY</h3>
+                <h3 className="text-base font-bold text-slate-900">DAIRYNEXA</h3>
                 <p className="text-[11px] text-slate-500">RAW MILK INWARD & QC ACCEPTANCE VOUCHER</p>
               </div>
 

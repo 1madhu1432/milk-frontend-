@@ -90,7 +90,7 @@ export const EmailConfigModal: React.FC<EmailConfigModalProps> = ({
             <label className="block font-semibold text-slate-700 mb-1">Sender Display Name</label>
             <input
               type="text"
-              placeholder="Harish Dairy Farm"
+              placeholder="DairyNexa"
               value={form.fromName}
               onChange={e => setForm({ ...form, fromName: e.target.value })}
               className="w-full px-3 py-2 rounded-lg border border-slate-200"
@@ -107,7 +107,7 @@ export const EmailConfigModal: React.FC<EmailConfigModalProps> = ({
             </label>
             <input
               type="email"
-              placeholder="billing@harishdairy.in"
+              placeholder="billing@dairynexa.in"
               value={form.fromEmail}
               onChange={e => setForm({ ...form, fromEmail: e.target.value })}
               className="w-full px-3 py-2 rounded-lg border border-slate-200"
@@ -119,7 +119,7 @@ export const EmailConfigModal: React.FC<EmailConfigModalProps> = ({
             <label className="block font-semibold text-slate-700 mb-1">Reply-To Address</label>
             <input
               type="email"
-              placeholder="support@harishdairy.in"
+              placeholder="support@dairynexa.in"
               value={form.replyToEmail}
               onChange={e => setForm({ ...form, replyToEmail: e.target.value })}
               className="w-full px-3 py-2 rounded-lg border border-slate-200"

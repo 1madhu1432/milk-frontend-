@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <div className="flex items-center justify-between p-4 border-b border-slate-100 md:hidden">
           <div className="flex items-center gap-2">
             <span className="text-xl">🥛</span>
-            <span className="font-extrabold text-slate-900 text-sm">Harish Dairy Menu</span>
+            <span className="font-extrabold text-slate-900 text-sm">DairyNexa Menu</span>
           </div>
           <button
             onClick={onClose}

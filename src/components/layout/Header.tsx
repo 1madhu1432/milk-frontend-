@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
           <div>
             <div className="flex items-center gap-1.5">
               <h1 className="text-base font-extrabold text-slate-900 tracking-tight">
-                {settings?.dairyName || 'Harish Dairy'}
+                {settings?.dairyName || 'DairyNexa'}
               </h1>
               {isDemoMode ? (
                 <span
