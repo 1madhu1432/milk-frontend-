@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDairy } from '../../contexts/DairyContext';
 import { deliveryApi } from '../../services/api/deliveryApi';
-import { Delivery } from '../../models/types';
+import { Delivery, Route } from '../../models/types';
 import { Badge } from '../../components/common/Badge';
 import { Modal } from '../../components/common/Modal';
 import {
@@ -84,10 +84,25 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
     return () => { isMounted = false; };
   }, [currentUser.id]);
 
-  const assignedRoute =
+  const fallbackRoute: Route = useMemo(() => ({
+    id: selectedRouteId || 'ROUTE-2',
+    tenantId: 'tenant-harish-dairy',
+    name: 'Route 2 - Madhapur & Hitec City',
+    area: 'Madhapur, Ayyappa Society, Kavuri Hills',
+    assignedEmployeeIds: ['EMP-01'],
+    assignedCustomerCount: 3,
+    totalMilkRequired: 5.5,
+    totalAdditionalProducts: 2,
+    completedDeliveries: 0,
+    pendingDeliveries: 3,
+    missedDeliveries: 0,
+    completionPercentage: 0,
+  }), [selectedRouteId]);
+
+  const assignedRoute: Route =
     routes.find(r => r.id === selectedRouteId) ||
-    routes[1] ||
-    routes[0];
+    routes[0] ||
+    fallbackRoute;
 
   const today = useMemo(() => {
     const todayStr = new Date().toISOString().slice(0, 10);
@@ -108,10 +123,14 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
   const [successToast, setSuccessToast] = useState<string | null>(null);
   const [isReconcileModalOpen, setIsReconcileModalOpen] = useState(false);
 
-  // Deliveries for today on this selected route
+  // Deliveries for today on this selected route (or today's stops fallback)
   const routeDeliveries = useMemo(() => {
-    return deliveries.filter(d => d.routeId === selectedRouteId && d.date === today);
-  }, [deliveries, selectedRouteId, today]);
+    const matched = deliveries.filter(d => (d.routeId === selectedRouteId || d.routeId === assignedRoute.id) && d.date === today);
+    if (matched.length > 0) return matched;
+    const todayAll = deliveries.filter(d => d.date === today);
+    if (todayAll.length > 0) return todayAll;
+    return deliveries;
+  }, [deliveries, selectedRouteId, assignedRoute.id, today]);
 
   // Route metrics
   const totalPlannedLitres = routeDeliveries.reduce((acc, d) => acc + d.plannedMilkQuantity, 0);

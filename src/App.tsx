@@ -120,6 +120,23 @@ export const App: React.FC = () => {
                   <Route path="profile" element={<EmployeeDashboard defaultTab="profile" />} />
                 </Route>
 
+                {/* Delivery Alias Routes */}
+                <Route
+                  path="/delivery"
+                  element={
+                    <ProtectedRoute allowedRoles={['DELIVERY_BOY', 'ADMIN', 'SUPER_ADMIN']}>
+                      <EmployeeLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<Navigate to="/delivery/home" replace />} />
+                  <Route path="home" element={<EmployeeDashboard defaultTab="home" />} />
+                  <Route path="route" element={<EmployeeDashboard defaultTab="route" />} />
+                  <Route path="deliveries" element={<EmployeeDashboard defaultTab="deliveries" />} />
+                  <Route path="history" element={<EmployeeDashboard defaultTab="history" />} />
+                  <Route path="profile" element={<EmployeeDashboard defaultTab="profile" />} />
+                </Route>
+
                 {/* 5. Module 4: Customer / User Portal */}
                 <Route
                   path="/customer"
@@ -139,7 +156,7 @@ export const App: React.FC = () => {
                 </Route>
 
                 {/* Quick Shortcuts */}
-                <Route path="/delivery" element={<Navigate to="/employee/deliveries" replace />} />
+                <Route path="/deliveries" element={<Navigate to="/employee/deliveries" replace />} />
 
                 {/* Root Fallback */}
                 <Route path="*" element={<Navigate to="/" replace />} />

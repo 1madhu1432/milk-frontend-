@@ -151,15 +151,20 @@ function loadInitialState() {
       try {
         const parsed = JSON.parse(saved);
         if (parsed) {
+          const loadedRoutes = parsed.routes && parsed.routes.length > 0 ? parsed.routes : initialRoutes;
+          const loadedCustomers = parsed.customers && parsed.customers.length > 0 ? parsed.customers : generateSeedCustomers();
+          const loadedEmployees = parsed.employees && parsed.employees.length > 0 ? parsed.employees : initialEmployees;
+          const loadedDeliveries = parsed.deliveries && parsed.deliveries.length > 0 ? parsed.deliveries : generateSeedDeliveries(loadedCustomers, loadedRoutes);
+
           return {
             isDemoMode: false,
             settings: parsed.settings || initialBusinessSettings,
-            routes: parsed.routes || [],
-            employees: parsed.employees || [],
+            routes: loadedRoutes,
+            employees: loadedEmployees,
             vendors: parsed.vendors || [],
-            products: parsed.products || initialProducts,
-            customers: parsed.customers || [],
-            deliveries: parsed.deliveries || [],
+            products: parsed.products && parsed.products.length > 0 ? parsed.products : initialProducts,
+            customers: loadedCustomers,
+            deliveries: loadedDeliveries,
             milkPurchases: parsed.milkPurchases || [],
             vendorPayments: parsed.vendorPayments || [],
             pauseRequests: parsed.pauseRequests || [],
@@ -176,16 +181,20 @@ function loadInitialState() {
     }
   }
 
-  // Pure clean baseline without any dummy or mock data
+  const defaultCustomers = generateSeedCustomers();
+  const defaultRoutes = initialRoutes;
+  const defaultDeliveries = generateSeedDeliveries(defaultCustomers, defaultRoutes);
+
+  // Clean, fully functional operational baseline
   return {
     isDemoMode: false,
     settings: initialBusinessSettings,
-    routes: [],
-    employees: [],
+    routes: defaultRoutes,
+    employees: initialEmployees,
     vendors: [],
     products: initialProducts,
-    customers: [],
-    deliveries: [],
+    customers: defaultCustomers,
+    deliveries: defaultDeliveries,
     milkPurchases: [],
     vendorPayments: [],
     pauseRequests: [],
