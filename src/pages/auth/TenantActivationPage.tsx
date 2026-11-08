@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDairy } from '../../contexts/DairyContext';
 import { useTenant } from '../../contexts/TenantContext';
+import { authApi } from '../../services/api/authApi';
 import { CheckCircle2, Lock, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 
 export const TenantActivationPage: React.FC = () => {
@@ -33,17 +34,21 @@ export const TenantActivationPage: React.FC = () => {
       return;
     }
 
+    if (!token) {
+      setError('Missing invitation token in URL query parameter. Please click the full invitation link.');
+      return;
+    }
+
     setLoading(true);
     try {
-      // In production, call backend /auth/invitation/accept
-      // Fallback/direct activation ensures immediate onboarding success
+      await authApi.activateAccount(token, password);
       setSuccess(true);
       setTimeout(() => {
         login('admin', currentTenant?.ownerEmail || 'owner@dairynexa.com', currentTenant?.ownerName || 'Dairy Owner', 'owner-01');
         navigate('/admin/dashboard');
       }, 1500);
     } catch (err: any) {
-      setError(err?.message || 'Failed to activate account. Please contact support.');
+      setError(err?.message || 'Failed to activate account. The invitation may be expired or already used.');
     } finally {
       setLoading(false);
     }
@@ -131,3 +136,4 @@ export const TenantActivationPage: React.FC = () => {
     </div>
   );
 };
+

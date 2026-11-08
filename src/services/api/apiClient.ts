@@ -83,8 +83,12 @@ async function attemptTokenRefresh(): Promise<string | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-DairyNexa-Client': 'true',
+      },
+      body: JSON.stringify(refreshToken ? { refreshToken } : {}),
     });
 
     if (!res.ok) return null;
@@ -112,6 +116,7 @@ export async function apiRequest<T = any>(
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'X-DairyNexa-Client': 'true',
     ...(options.headers as Record<string, string>),
   };
 
@@ -127,6 +132,7 @@ export async function apiRequest<T = any>(
 
   try {
     const res = await fetch(url, {
+      credentials: 'include',
       ...options,
       headers,
     });

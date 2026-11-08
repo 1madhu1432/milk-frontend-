@@ -110,6 +110,13 @@ export const authApi = {
     return await api.get('/auth/me');
   },
 
+  activateAccount: async (token: string, passwordPlain: string) => {
+    return await api.post('/auth/activate', {
+      token,
+      password: passwordPlain,
+    });
+  },
+
   logout: async () => {
     try {
       await api.post('/auth/logout');
