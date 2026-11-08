@@ -8,6 +8,7 @@ import { EmployeeLayout } from './components/layout/EmployeeLayout';
 import { CustomerLayout } from './components/layout/CustomerLayout';
 
 // Auth Pages
+import { LandingPage } from './pages/landing/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { AdminLoginPage } from './pages/auth/AdminLoginPage';
 import { DeliveryLoginPage } from './pages/auth/DeliveryLoginPage';
@@ -53,9 +54,13 @@ export const App: React.FC = () => {
           <IntegrationsProvider>
             <BrowserRouter>
               <Routes>
-                {/* 1. Dedicated Role Logins */}
+                {/* 1. Public Landing Page */}
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/landing" element={<LandingPage />} />
+
+                {/* 2. Dedicated Role Logins */}
                 <Route path="/demo" element={<DemoMain />} />
-                <Route path="/login" element={<Navigate to="/login/admin" replace />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/login/admin" element={<AdminLoginPage />} />
                 <Route path="/login/delivery" element={<DeliveryLoginPage />} />
                 <Route path="/login/customer" element={<CustomerLoginPage />} />
@@ -137,8 +142,7 @@ export const App: React.FC = () => {
                 <Route path="/delivery" element={<Navigate to="/employee/deliveries" replace />} />
 
                 {/* Root Fallback */}
-                <Route path="/" element={<Navigate to="/admin" replace />} />
-                <Route path="*" element={<Navigate to="/admin" replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </BrowserRouter>
           </IntegrationsProvider>
