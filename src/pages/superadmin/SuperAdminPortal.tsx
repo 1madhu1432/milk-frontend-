@@ -860,8 +860,8 @@ export const SuperAdminPortal: React.FC = () => {
       {notification && (
         <div
           className={`fixed top-5 right-5 z-50 px-4 py-3 rounded-2xl shadow-2xl border text-xs font-bold flex items-center gap-2 transition-all animate-bounce ${notification.type === 'success'
-              ? 'bg-emerald-950/90 text-emerald-200 border-emerald-700/60'
-              : 'bg-rose-950/90 text-rose-200 border-rose-700/60'
+            ? 'bg-emerald-950/90 text-emerald-200 border-emerald-700/60'
+            : 'bg-rose-950/90 text-rose-200 border-rose-700/60'
             }`}
         >
           {notification.type === 'success' ? (
@@ -945,8 +945,8 @@ export const SuperAdminPortal: React.FC = () => {
                     }}
                     title={sidebarCollapsed ? tab.label : undefined}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer group ${isActive
-                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/70'
+                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/70'
                       } ${sidebarCollapsed ? 'justify-center px-0' : ''}`}
                   >
                     <Icon className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`} />
@@ -956,8 +956,8 @@ export const SuperAdminPortal: React.FC = () => {
                         {tab.badge !== undefined && tab.badge > 0 && (
                           <span
                             className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${isActive
-                                ? 'bg-white/20 text-white'
-                                : tab.badgeColor || 'bg-slate-800 text-slate-300'
+                              ? 'bg-white/20 text-white'
+                              : tab.badgeColor || 'bg-slate-800 text-slate-300'
                               }`}
                           >
                             {tab.badge}
@@ -1176,10 +1176,10 @@ export const SuperAdminPortal: React.FC = () => {
                             <span className="text-xs font-mono text-indigo-400">({req.requestedSlug}.milkerp.com)</span>
                             <span
                               className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${req.status === 'PENDING'
-                                  ? 'bg-amber-500/20 text-amber-300'
-                                  : req.status === 'APPROVED'
-                                    ? 'bg-emerald-500/20 text-emerald-300'
-                                    : 'bg-rose-500/20 text-rose-300'
+                                ? 'bg-amber-500/20 text-amber-300'
+                                : req.status === 'APPROVED'
+                                  ? 'bg-emerald-500/20 text-emerald-300'
+                                  : 'bg-rose-500/20 text-rose-300'
                                 }`}
                             >
                               {req.status}
@@ -1321,10 +1321,10 @@ export const SuperAdminPortal: React.FC = () => {
                               <span className="text-xs font-bold text-white truncate">{t.tenantName}</span>
                               <span
                                 className={`text-[9px] uppercase font-bold px-1.5 py-0.2 rounded-full ${t.status === 'OPEN'
-                                    ? 'bg-blue-500/20 text-blue-300'
-                                    : t.status === 'IN_PROGRESS'
-                                      ? 'bg-purple-500/20 text-purple-300'
-                                      : 'bg-emerald-500/20 text-emerald-300'
+                                  ? 'bg-blue-500/20 text-blue-300'
+                                  : t.status === 'IN_PROGRESS'
+                                    ? 'bg-purple-500/20 text-purple-300'
+                                    : 'bg-emerald-500/20 text-emerald-300'
                                   }`}
                               >
                                 {t.status}
@@ -1376,8 +1376,8 @@ export const SuperAdminPortal: React.FC = () => {
                               <div
                                 key={m.id}
                                 className={`p-3 rounded-xl text-xs max-w-lg ${m.senderRole === 'SUPER_ADMIN'
-                                    ? 'ml-auto bg-indigo-900/40 border border-indigo-700/50 text-indigo-100'
-                                    : 'mr-auto bg-slate-800/80 border border-slate-700 text-slate-200'
+                                  ? 'ml-auto bg-indigo-900/40 border border-indigo-700/50 text-indigo-100'
+                                  : 'mr-auto bg-slate-800/80 border border-slate-700 text-slate-200'
                                   }`}
                               >
                                 <div className="flex items-center justify-between gap-4 text-[10px] text-slate-400 mb-1">
@@ -2068,10 +2068,10 @@ export const SuperAdminPortal: React.FC = () => {
                         <span className="font-bold text-white">{u.name}</span>
                         <span
                           className={`text-[9px] uppercase px-1.5 py-0.2 rounded font-mono font-bold ${u.role === 'ADMIN'
-                              ? 'bg-purple-500/20 text-purple-300'
-                              : u.role === 'DELIVERY_BOY'
-                                ? 'bg-teal-500/20 text-teal-300'
-                                : 'bg-blue-500/20 text-blue-300'
+                            ? 'bg-purple-500/20 text-purple-300'
+                            : u.role === 'DELIVERY_BOY'
+                              ? 'bg-teal-500/20 text-teal-300'
+                              : 'bg-blue-500/20 text-blue-300'
                             }`}
                         >
                           {u.role}
@@ -2097,8 +2097,8 @@ export const SuperAdminPortal: React.FC = () => {
                       <button
                         onClick={() => handleToggleUserStatus(u.id, u.isActive)}
                         className={`px-2 py-1 rounded-lg font-semibold text-[10px] ${u.isActive
-                            ? 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'
-                            : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'
+                          ? 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30'
+                          : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30'
                           }`}
                       >
                         {u.isActive ? 'Deactivate' : 'Activate'}

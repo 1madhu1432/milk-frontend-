@@ -31,7 +31,7 @@ export const LandingPage: React.FC = () => {
       login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
       navigate('/admin/dashboard');
     } else if (role === 'employee') {
-      login('employee', 'delivery@dailydairy.demo', 'Suresh Kumar Goud', 'user-deliv-01');
+      login('employee', 'delivery@dairynexa.com', 'Suresh Kumar Goud', 'user-deliv-01');
       navigate('/employee/deliveries');
     } else if (role === 'customer') {
       login('customer', 'subscriber@dairynexa.com', 'Valued Customer', 'user-cust-01');
@@ -55,7 +55,6 @@ export const LandingPage: React.FC = () => {
       badge: 'Dairy ERP Portal',
       badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
       btnClass: 'from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500',
-      demoCreds: 'admin@vallycrm.com • admin123',
       actionRole: 'admin' as const,
     },
     {
@@ -70,7 +69,6 @@ export const LandingPage: React.FC = () => {
       badge: 'Subscriber Portal',
       badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
       btnClass: 'from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500',
-      demoCreds: 'customer@dailydairy.demo • customer123',
       actionRole: 'customer' as const,
     },
     {
@@ -85,7 +83,6 @@ export const LandingPage: React.FC = () => {
       badge: 'Delivery App',
       badgeClass: 'bg-teal-500/15 text-teal-300 border-teal-500/30',
       btnClass: 'from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500',
-      demoCreds: 'delivery@dailydairy.demo • staff123',
       actionRole: 'employee' as const,
     },
     {
@@ -100,7 +97,6 @@ export const LandingPage: React.FC = () => {
       badge: 'SaaS Platform Owner',
       badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
       btnClass: 'from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500',
-      demoCreds: 'platform.owner@milkerp.com • admin123',
       actionRole: 'super_admin' as const,
     },
   ];
@@ -313,7 +309,7 @@ export const LandingPage: React.FC = () => {
               One Unified System, 4 Specialized Portals
             </h2>
             <p className="text-sm text-slate-400 mt-2 font-medium">
-              Click any portal below to enter directly as a demo user or use the dedicated login page.
+              Select any portal below to enter your workspace or use the dedicated login page.
             </p>
           </div>
 
@@ -339,10 +335,6 @@ export const LandingPage: React.FC = () => {
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-2.5">
-                  <div className="text-[10px] text-slate-400 truncate">
-                    Demo: <span className="font-mono text-slate-300 font-bold">{module.demoCreds}</span>
-                  </div>
-
                   <button
                     onClick={() => handleQuickDemo(module.actionRole)}
                     className={`w-full py-2.5 rounded-xl text-xs font-black bg-gradient-to-r ${module.btnClass} text-white shadow-md flex items-center justify-center gap-1.5 cursor-pointer group hover:shadow-lg transition-all`}

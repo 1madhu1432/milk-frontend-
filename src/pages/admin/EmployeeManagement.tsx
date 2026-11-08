@@ -53,7 +53,7 @@ export const EmployeeManagement: React.FC = () => {
       addEmployee({
         name: formData.name!,
         phone: formData.phone!,
-        email: formData.email || `${formData.name!.toLowerCase().replace(/\s+/g, '')}@dailydairy.demo`,
+        email: formData.email || `${formData.name!.toLowerCase().replace(/\s+/g, '')}@dairynexa.com`,
         assignedRouteIds: formData.assignedRouteIds || ['ROUTE-1'],
         joiningDate: formData.joiningDate || '2026-10-10',
         status: formData.status as any || 'active',

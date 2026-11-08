@@ -96,7 +96,6 @@ export const LoginPage: React.FC = () => {
       badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
       directButtonText: 'Open Customer Login Page',
       btnClass: 'from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700',
-      demoUser: 'customer@dailydairy.demo',
     },
     {
       id: 'delivery',
@@ -111,7 +110,6 @@ export const LoginPage: React.FC = () => {
       badgeClass: 'bg-teal-100 text-teal-800 border-teal-300',
       directButtonText: 'Open Delivery Login Page',
       btnClass: 'from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700',
-      demoUser: 'delivery@dailydairy.demo',
     },
     {
       id: 'admin',
@@ -126,7 +124,6 @@ export const LoginPage: React.FC = () => {
       badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
       directButtonText: 'Open Dairy Admin Login Page',
       btnClass: 'from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700',
-      demoUser: 'admin@dailydairy.demo',
     },
     {
       id: 'super-admin',
@@ -141,7 +138,6 @@ export const LoginPage: React.FC = () => {
       badgeClass: 'bg-purple-100 text-purple-800 border-purple-300',
       directButtonText: 'Open Super Admin Login Page',
       btnClass: 'from-purple-700 to-indigo-700 hover:from-purple-800 hover:to-indigo-800',
-      demoUser: 'platform.owner@milkerp.com',
     },
   ];
 
@@ -214,10 +210,6 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <div className="mt-5 pt-3.5 border-t border-slate-100 space-y-2">
-              <div className="text-[10px] text-slate-400 font-medium truncate">
-                Demo user: <span className="font-mono text-slate-600 font-bold">{m.demoUser}</span>
-              </div>
-
               {/* Primary Direct Button to the Separate Login Page */}
               <button
                 type="button"

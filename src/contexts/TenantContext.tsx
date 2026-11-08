@@ -48,9 +48,9 @@ interface TenantContextType {
 
 const TenantContext = createContext<TenantContextType | undefined>(undefined);
 
-const TENANTS_STORAGE_KEY = 'dairynexa_multi_tenant_registry_v2';
-const CURRENT_TENANT_ID_KEY = 'dairynexa_active_tenant_id_v2';
-const TICKETS_STORAGE_KEY = 'dairynexa_platform_tickets_v2';
+const TENANTS_STORAGE_KEY = 'dairynexa_multi_tenant_registry_v3';
+const CURRENT_TENANT_ID_KEY = 'dairynexa_active_tenant_id_v3';
+const TICKETS_STORAGE_KEY = 'dairynexa_platform_tickets_v3';
 
 export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Load tenants registry
@@ -60,8 +60,14 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed) && parsed.length >= 3) {
-            return parsed;
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            // Remove legacy mock tenants
+            const cleaned = parsed.filter(t => t.id !== 'tenant-gokul-organic' && t.id !== 'tenant-vrindavan-farms');
+            if (!cleaned.some(t => t.id === 'tenant-madhu-dairy')) {
+              const madhu = initialTenants.find(t => t.id === 'tenant-madhu-dairy');
+              if (madhu) cleaned.push(madhu);
+            }
+            return cleaned;
           }
         } catch {
           // ignore
@@ -113,10 +119,12 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       // 3. Check saved ID in localStorage
       if (window.localStorage) {
         const savedId = localStorage.getItem(CURRENT_TENANT_ID_KEY);
-        if (savedId && savedId !== 'tenant-harish-dairy') return savedId;
+        if (savedId && savedId !== 'tenant-harish-dairy' && savedId !== 'tenant-gokul-organic' && savedId !== 'tenant-vrindavan-farms') {
+          return savedId;
+        }
       }
     }
-    return 'tenant-dairynexa';
+    return 'tenant-madhu-dairy';
   });
 
   // Listen to URL query parameter or subdomain changes
