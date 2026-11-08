@@ -130,7 +130,7 @@ interface DairyContextType {
 
 const DairyContext = createContext<DairyContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'milkerp_clean_production_state_v1';
+const STORAGE_KEY = 'milkerp_public_live_state_v1';
 
 function emitBusinessEvent(eventType: string, detail: Record<string, any>) {
   if (typeof window !== 'undefined') {
@@ -145,26 +145,22 @@ function loadInitialState() {
     localStorage.removeItem('harish_dairy_app_state_v2');
     localStorage.removeItem('harish_dairy_state_v2');
     localStorage.removeItem('milkerp_data_mode');
+    localStorage.removeItem('milkerp_clean_production_state_v1');
 
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (parsed) {
-          const loadedRoutes = parsed.routes && parsed.routes.length > 0 ? parsed.routes : initialRoutes;
-          const loadedCustomers = parsed.customers && parsed.customers.length > 0 ? parsed.customers : generateSeedCustomers();
-          const loadedEmployees = parsed.employees && parsed.employees.length > 0 ? parsed.employees : initialEmployees;
-          const loadedDeliveries = parsed.deliveries && parsed.deliveries.length > 0 ? parsed.deliveries : generateSeedDeliveries(loadedCustomers, loadedRoutes);
-
           return {
             isDemoMode: false,
             settings: parsed.settings || initialBusinessSettings,
-            routes: loadedRoutes,
-            employees: loadedEmployees,
+            routes: parsed.routes || [],
+            employees: parsed.employees || [],
             vendors: parsed.vendors || [],
             products: parsed.products && parsed.products.length > 0 ? parsed.products : initialProducts,
-            customers: loadedCustomers,
-            deliveries: loadedDeliveries,
+            customers: parsed.customers || [],
+            deliveries: parsed.deliveries || [],
             milkPurchases: parsed.milkPurchases || [],
             vendorPayments: parsed.vendorPayments || [],
             pauseRequests: parsed.pauseRequests || [],
@@ -181,20 +177,16 @@ function loadInitialState() {
     }
   }
 
-  const defaultCustomers = generateSeedCustomers();
-  const defaultRoutes = initialRoutes;
-  const defaultDeliveries = generateSeedDeliveries(defaultCustomers, defaultRoutes);
-
-  // Clean, fully functional operational baseline
+  // Pure clean baseline without any dummy or mock data
   return {
     isDemoMode: false,
     settings: initialBusinessSettings,
-    routes: defaultRoutes,
-    employees: initialEmployees,
+    routes: [],
+    employees: [],
     vendors: [],
     products: initialProducts,
-    customers: defaultCustomers,
-    deliveries: defaultDeliveries,
+    customers: [],
+    deliveries: [],
     milkPurchases: [],
     vendorPayments: [],
     pauseRequests: [],

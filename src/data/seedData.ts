@@ -39,53 +39,10 @@ export const initialBusinessSettings: BusinessSettings = {
     'Hello {{customerName}},\nYour milk and dairy product bill for {{billingMonth}} is ready.\nMilk charges: {{milkCharges}}\nProduct charges: {{productCharges}}\nPrevious balance: {{previousBalance}}\nPayments applied: {{paymentsApplied}}\nAmount payable: {{amountDue}}\n\nThank you for choosing Harish Dairy!',
 };
 
-// Operational Routes
-export const initialRoutes: Route[] = [
-  {
-    id: 'ROUTE-1',
-    tenantId: 'tenant-harish-dairy',
-    name: 'Route 1 - Jubilee Hills & Road 36',
-    area: 'Jubilee Hills, Road No. 36, Film Nagar',
-    assignedEmployeeIds: ['EMP-01'],
-    assignedCustomerCount: 2,
-    totalMilkRequired: 4.0,
-    totalAdditionalProducts: 0,
-    completedDeliveries: 0,
-    pendingDeliveries: 2,
-    missedDeliveries: 0,
-    completionPercentage: 0,
-  },
-  {
-    id: 'ROUTE-2',
-    tenantId: 'tenant-harish-dairy',
-    name: 'Route 2 - Madhapur & Hitec City',
-    area: 'Madhapur, Ayyappa Society, Kavuri Hills',
-    assignedEmployeeIds: ['EMP-01'],
-    assignedCustomerCount: 3,
-    totalMilkRequired: 5.5,
-    totalAdditionalProducts: 2,
-    completedDeliveries: 0,
-    pendingDeliveries: 3,
-    missedDeliveries: 0,
-    completionPercentage: 0,
-  },
-];
+// Clean production baselines - No dummy records
+export const initialRoutes: Route[] = [];
 
-export const initialEmployees: Employee[] = [
-  {
-    id: 'EMP-01',
-    tenantId: 'tenant-harish-dairy',
-    name: 'Suresh Kumar Goud',
-    phone: '+91 98491 55667',
-    email: 'delivery@dailydairy.demo',
-    assignedRouteIds: ['ROUTE-1', 'ROUTE-2'],
-    joiningDate: '2025-06-01',
-    status: 'active',
-    dailyDeliveriesCompleted: 42,
-    missedDeliveries: 1,
-    collectionsRecorded: 15400,
-  },
-];
+export const initialEmployees: Employee[] = [];
 
 export const initialVendors: Vendor[] = [];
 
@@ -100,7 +57,7 @@ export const initialProducts: Product[] = [
     unitOrPackageSize: '1 Litre Glass Bottle / Pouch',
     purchaseCost: 42,
     sellingPrice: 60,
-    availableStock: 120,
+    availableStock: 0,
     minimumStock: 80,
     isRecurringEligible: true,
     status: 'active',
@@ -115,7 +72,7 @@ export const initialProducts: Product[] = [
     unitOrPackageSize: '1 Litre Pouch',
     purchaseCost: 50,
     sellingPrice: 75,
-    availableStock: 150,
+    availableStock: 0,
     minimumStock: 100,
     isRecurringEligible: true,
     status: 'active',
@@ -130,7 +87,7 @@ export const initialProducts: Product[] = [
     unitOrPackageSize: '200g Vacuum Pack',
     purchaseCost: 75,
     sellingPrice: 110,
-    availableStock: 45,
+    availableStock: 0,
     minimumStock: 25,
     isRecurringEligible: true,
     status: 'active',
@@ -145,7 +102,7 @@ export const initialProducts: Product[] = [
     unitOrPackageSize: '500g Tub',
     purchaseCost: 32,
     sellingPrice: 50,
-    availableStock: 60,
+    availableStock: 0,
     minimumStock: 30,
     isRecurringEligible: true,
     status: 'active',
@@ -160,7 +117,7 @@ export const initialProducts: Product[] = [
     unitOrPackageSize: '500ml Glass Jar',
     purchaseCost: 450,
     sellingPrice: 680,
-    availableStock: 35,
+    availableStock: 0,
     minimumStock: 15,
     isRecurringEligible: false,
     status: 'active',
@@ -175,7 +132,7 @@ export const initialProducts: Product[] = [
     unitOrPackageSize: '200ml Glass Bottle',
     purchaseCost: 28,
     sellingPrice: 45,
-    availableStock: 50,
+    availableStock: 0,
     minimumStock: 30,
     isRecurringEligible: true,
     status: 'active',
@@ -183,131 +140,11 @@ export const initialProducts: Product[] = [
 ];
 
 export function generateSeedCustomers(): Customer[] {
-  return [
-    {
-      id: 'CUST-001',
-      tenantId: 'tenant-harish-dairy',
-      name: 'Dr. Srinivas Rao',
-      mobile: '9849011223',
-      whatsapp: '9849011223',
-      email: 'srinivas.rao@gmail.com',
-      houseNo: 'Villa 14',
-      street: 'Road No. 12',
-      area: 'Banjara Hills',
-      landmark: 'Near Cancer Hospital',
-      deliveryInstructions: 'Leave bottle inside milk basket at main gate',
-      assignedRouteId: 'ROUTE-1',
-      assignedEmployeeId: 'EMP-01',
-      milkType: 'Cow Milk',
-      dailyQuantity: 2.0,
-      pricePerLitre: 60,
-      subscriptionStartDate: '2026-01-01',
-      billingDueDate: 5,
-      status: 'active',
-      outstandingBalance: 0,
-    },
-    {
-      id: 'CUST-002',
-      tenantId: 'tenant-harish-dairy',
-      name: 'Mrs. Lakshmi Narayanan',
-      mobile: '9849022334',
-      whatsapp: '9849022334',
-      email: 'lakshmi.n@gmail.com',
-      houseNo: 'Flat 402',
-      street: 'Block B, My Home Bhooja',
-      area: 'Hitec City',
-      landmark: 'Opposite Biodiversity Park',
-      deliveryInstructions: 'Ring bell twice, leave on milk shelf',
-      assignedRouteId: 'ROUTE-2',
-      assignedEmployeeId: 'EMP-01',
-      milkType: 'Buffalo Milk',
-      dailyQuantity: 1.5,
-      pricePerLitre: 75,
-      subscriptionStartDate: '2026-01-10',
-      billingDueDate: 5,
-      status: 'active',
-      outstandingBalance: 150,
-    },
-    {
-      id: 'CUST-003',
-      tenantId: 'tenant-harish-dairy',
-      name: 'Vikram & Ananya Sharma',
-      mobile: '9849033445',
-      whatsapp: '9849033445',
-      email: 'vikram.sharma@yahoo.com',
-      houseNo: 'House 88',
-      street: 'Lane 4, Kakatiya Hills',
-      area: 'Madhapur',
-      landmark: 'Behind D-Mart',
-      deliveryInstructions: 'Hang bag on side hook next to nameplate',
-      assignedRouteId: 'ROUTE-2',
-      assignedEmployeeId: 'EMP-01',
-      milkType: 'Cow Milk',
-      dailyQuantity: 2.0,
-      pricePerLitre: 60,
-      subscriptionStartDate: '2026-02-01',
-      billingDueDate: 5,
-      status: 'active',
-      outstandingBalance: 0,
-    },
-    {
-      id: 'CUST-004',
-      tenantId: 'tenant-harish-dairy',
-      name: 'K. Sunitha Reddy',
-      mobile: '9849044556',
-      whatsapp: '9849044556',
-      email: 'sunitha.reddy@outlook.com',
-      houseNo: 'Flat 101',
-      street: 'Tower 7, Rainbow Vistas',
-      area: 'Moosapet',
-      landmark: 'Near Metro Station',
-      deliveryInstructions: 'Ring doorbell, collect cash if weekend',
-      assignedRouteId: 'ROUTE-2',
-      assignedEmployeeId: 'EMP-01',
-      milkType: 'Cow Milk',
-      dailyQuantity: 2.0,
-      pricePerLitre: 60,
-      subscriptionStartDate: '2026-02-15',
-      billingDueDate: 5,
-      status: 'active',
-      outstandingBalance: 0,
-    },
-  ];
+  return [];
 }
 
-export function generateSeedDeliveries(custs?: Customer[], _routes?: Route[]): Delivery[] {
-  const customers = custs && custs.length > 0 ? custs : generateSeedCustomers();
-  const today = new Date().toISOString().slice(0, 10);
-
-  return customers.map((c, idx) => ({
-    id: `DEL-${today}-${String(idx + 1).padStart(3, '0')}`,
-    tenantId: c.tenantId,
-    date: today,
-    customerId: c.id,
-    customerName: c.name,
-    customerMobile: c.mobile,
-    routeId: c.assignedRouteId || 'ROUTE-2',
-    routeName: c.assignedRouteId === 'ROUTE-1' ? 'Route 1 - Jubilee Hills' : 'Route 2 - Madhapur & Hitec City',
-    employeeId: 'EMP-01',
-    employeeName: 'Suresh Kumar Goud',
-    milkType: c.milkType,
-    plannedMilkQuantity: c.dailyQuantity,
-    actualMilkQuantity: c.dailyQuantity,
-    pricePerLitre: c.pricePerLitre,
-    additionalProducts: idx === 1 ? [
-      {
-        productId: 'PROD-03',
-        productName: 'Artisanal Malai Paneer (200g)',
-        unit: 'Pack',
-        plannedQty: 1,
-        actualQty: 1,
-        unitPrice: 110,
-      }
-    ] : [],
-    status: (idx === 0 ? 'Delivered' : 'Scheduled') as Delivery['status'],
-    deliveryNotes: c.deliveryInstructions,
-    collectedAmount: 0,
-  }));
+export function generateSeedDeliveries(_customers?: Customer[], _routes?: Route[]): Delivery[] {
+  return [];
 }
 
 export const initialMilkPurchases: MilkPurchase[] = [];

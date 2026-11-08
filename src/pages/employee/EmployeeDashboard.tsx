@@ -85,16 +85,16 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
   }, [currentUser.id]);
 
   const fallbackRoute: Route = useMemo(() => ({
-    id: selectedRouteId || 'ROUTE-2',
+    id: selectedRouteId || 'ROUTE-EMPTY',
     tenantId: 'tenant-harish-dairy',
-    name: 'Route 2 - Madhapur & Hitec City',
-    area: 'Madhapur, Ayyappa Society, Kavuri Hills',
-    assignedEmployeeIds: ['EMP-01'],
-    assignedCustomerCount: 3,
-    totalMilkRequired: 5.5,
-    totalAdditionalProducts: 2,
+    name: 'No Active Route Assigned',
+    area: 'Unassigned Area',
+    assignedEmployeeIds: [],
+    assignedCustomerCount: 0,
+    totalMilkRequired: 0,
+    totalAdditionalProducts: 0,
     completedDeliveries: 0,
-    pendingDeliveries: 3,
+    pendingDeliveries: 0,
     missedDeliveries: 0,
     completionPercentage: 0,
   }), [selectedRouteId]);
@@ -123,13 +123,9 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
   const [successToast, setSuccessToast] = useState<string | null>(null);
   const [isReconcileModalOpen, setIsReconcileModalOpen] = useState(false);
 
-  // Deliveries for today on this selected route (or today's stops fallback)
+  // Deliveries for today on this selected route
   const routeDeliveries = useMemo(() => {
-    const matched = deliveries.filter(d => (d.routeId === selectedRouteId || d.routeId === assignedRoute.id) && d.date === today);
-    if (matched.length > 0) return matched;
-    const todayAll = deliveries.filter(d => d.date === today);
-    if (todayAll.length > 0) return todayAll;
-    return deliveries;
+    return deliveries.filter(d => (d.routeId === selectedRouteId || d.routeId === assignedRoute.id) && d.date === today);
   }, [deliveries, selectedRouteId, assignedRoute.id, today]);
 
   // Route metrics
@@ -313,7 +309,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             className="w-full min-h-[52px] bg-gradient-to-r from-emerald-600 to-green-700 hover:from-emerald-700 hover:to-green-800 text-white font-black py-3.5 px-4 rounded-2xl text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
             <Play className="w-5 h-5 fill-white" />
-            <span>{pendingCount > 0 ? `Continue Route (${pendingCount} Doors Left)` : 'Review Completed Deliveries'}</span>
+            <span>{pendingCount > 0 ? `Continue Route (${pendingCount} Doors Left)` : 'Review Daily Deliveries'}</span>
             <ArrowRight className="w-4 h-4 ml-1" />
           </button>
 
@@ -382,6 +378,16 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             </div>
           )}
 
+          {!nextCustomer && (
+            <div className="bg-white rounded-3xl border border-slate-200/90 p-6 text-center space-y-2 shadow-2xs">
+              <Truck className="w-10 h-10 text-slate-300 mx-auto" />
+              <h3 className="text-sm font-black text-slate-800">No Pending Stops in Queue</h3>
+              <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                Customer delivery drops for today will automatically appear here once subscriptions and routes are configured in the Admin workspace.
+              </p>
+            </div>
+          )}
+
           {/* Quick Shift Reconciliation Footer Button */}
           <button
             onClick={() => setIsReconcileModalOpen(true)}
@@ -401,7 +407,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
           <div className="bg-white p-3.5 rounded-2xl border border-slate-200/90 shadow-2xs space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
-                5 Daily Routes Available
+                {routes.length} Daily Routes Available
               </span>
               <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                 Tap to switch
@@ -409,29 +415,35 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             </div>
 
             {/* Route Pills Switcher */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              {routes.map(r => {
-                const isSelected = selectedRouteId === r.id;
-                return (
-                  <button
-                    key={r.id}
-                    onClick={() => setSelectedRouteId(r.id)}
-                    className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-2 border ${isSelected
+            {routes.length === 0 ? (
+              <p className="text-xs text-slate-500 py-3 text-center font-medium">
+                No delivery routes created yet. Add routes in Admin workspace.
+              </p>
+            ) : (
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                {routes.map(r => {
+                  const isSelected = selectedRouteId === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      onClick={() => setSelectedRouteId(r.id)}
+                      className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-2 border ${isSelected
                         ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
                         : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
-                      }`}
-                  >
-                    <span>{r.name.split(' - ')[0]}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
                         }`}
                     >
-                      {r.assignedCustomerCount}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                      <span>{(r.name || '').split(' - ')[0]}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
+                          }`}
+                      >
+                        {r.assignedCustomerCount || 0}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Route Details Card */}
@@ -469,29 +481,34 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
               <span className="text-[11px] text-slate-500 font-bold">1-to-N order</span>
             </div>
 
-            <div className="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
-              {routeDeliveries.map((del, idx) => {
-                const isDelivered = del.status === 'Delivered';
-                const isMissed = del.status === 'Missed';
-                const cust = customers.find(c => c.id === del.customerId);
+            {routeDeliveries.length === 0 ? (
+              <p className="text-xs text-slate-500 py-6 text-center font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                No delivery sequence stops assigned for this route today.
+              </p>
+            ) : (
+              <div className="space-y-2.5 max-h-[480px] overflow-y-auto pr-1">
+                {routeDeliveries.map((del, idx) => {
+                  const isDelivered = del.status === 'Delivered';
+                  const isMissed = del.status === 'Missed';
+                  const cust = customers.find(c => c.id === del.customerId);
 
-                return (
-                  <div
-                    key={del.id}
-                    className={`p-3 rounded-2xl border flex items-center justify-between gap-2 transition-all ${isDelivered
+                  return (
+                    <div
+                      key={del.id}
+                      className={`p-3 rounded-2xl border flex items-center justify-between gap-2 transition-all ${isDelivered
                         ? 'bg-emerald-50/40 border-emerald-200/80'
                         : isMissed
                           ? 'bg-rose-50/40 border-rose-200/80'
                           : 'bg-slate-50/80 border-slate-200 hover:border-emerald-300'
-                      }`}
-                  >
+                        }`}
+                    >
                     <div className="flex items-center gap-2.5">
                       <span
                         className={`w-7 h-7 rounded-xl flex items-center justify-center font-black text-[11px] shrink-0 ${isDelivered
-                            ? 'bg-emerald-600 text-white'
-                            : isMissed
-                              ? 'bg-rose-600 text-white'
-                              : 'bg-slate-200 text-slate-700'
+                          ? 'bg-emerald-600 text-white'
+                          : isMissed
+                            ? 'bg-rose-600 text-white'
+                            : 'bg-slate-200 text-slate-700'
                           }`}
                       >
                         {idx + 1}
@@ -528,6 +545,7 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                 );
               })}
             </div>
+            )}
           </div>
         </div>
       )}
@@ -539,29 +557,35 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
         <div className="space-y-3.5">
           {/* Route Switcher */}
           <div className="bg-white p-2.5 rounded-2xl border border-slate-200/90 shadow-2xs">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-              {routes.map(r => {
-                const isSelected = selectedRouteId === r.id;
-                return (
-                  <button
-                    key={r.id}
-                    onClick={() => setSelectedRouteId(r.id)}
-                    className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-1.5 border ${isSelected
+            {routes.length === 0 ? (
+              <p className="text-xs text-slate-500 py-1.5 text-center font-medium">
+                No delivery routes configured yet
+              </p>
+            ) : (
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                {routes.map(r => {
+                  const isSelected = selectedRouteId === r.id;
+                  return (
+                    <button
+                      key={r.id}
+                      onClick={() => setSelectedRouteId(r.id)}
+                      className={`min-h-[44px] px-3 py-1.5 rounded-xl text-xs font-black transition-all shrink-0 cursor-pointer flex items-center gap-1.5 border ${isSelected
                         ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
                         : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'
-                      }`}
-                  >
-                    <span>{r.name.split(' - ')[0]}</span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
                         }`}
                     >
-                      {r.assignedCustomerCount}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
+                      <span>{(r.name || '').split(' - ')[0]}</span>
+                      <span
+                        className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${isSelected ? 'bg-white/25 text-white' : 'bg-slate-200 text-slate-700'
+                          }`}
+                      >
+                        {r.assignedCustomerCount || 0}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           {/* Filter Chips (Min 44px touch targets) */}
@@ -569,8 +593,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             <button
               onClick={() => setFilterStatus('ALL')}
               className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'ALL'
-                  ? 'bg-emerald-700 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-emerald-700 text-white shadow-xs'
+                : 'text-slate-600 hover:bg-slate-100'
                 }`}
             >
               <span>All</span>
@@ -579,8 +603,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             <button
               onClick={() => setFilterStatus('PENDING')}
               className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'PENDING'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-amber-600 text-white shadow-xs'
+                : 'text-slate-600 hover:bg-slate-100'
                 }`}
             >
               <span>Pending</span>
@@ -589,8 +613,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             <button
               onClick={() => setFilterStatus('DELIVERED')}
               className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'DELIVERED'
-                  ? 'bg-emerald-700 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-emerald-700 text-white shadow-xs'
+                : 'text-slate-600 hover:bg-slate-100'
                 }`}
             >
               <span>Done</span>
@@ -599,8 +623,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
             <button
               onClick={() => setFilterStatus('MISSED')}
               className={`min-h-[44px] rounded-xl transition-all cursor-pointer text-center flex flex-col items-center justify-center ${filterStatus === 'MISSED'
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:bg-slate-100'
+                ? 'bg-rose-600 text-white shadow-xs'
+                : 'text-slate-600 hover:bg-slate-100'
                 }`}
             >
               <span>Missed</span>
@@ -622,7 +646,16 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
 
           {/* Vertical Mobile Delivery Cards */}
           <div className="space-y-3">
-            {filteredDeliveries.map((del, idx) => {
+            {filteredDeliveries.length === 0 ? (
+              <div className="py-12 px-4 text-center bg-white rounded-3xl border border-dashed border-slate-200 shadow-2xs">
+                <Truck className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+                <p className="text-sm font-bold text-slate-700">No deliveries found</p>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {searchTerm ? 'No stops match your search criteria' : 'Deliveries will appear here once customers and subscriptions are scheduled'}
+                </p>
+              </div>
+            ) : (
+              filteredDeliveries.map((del, idx) => {
               const isDone = del.status === 'Delivered';
               const isMissed = del.status === 'Missed';
               const isPending = del.status === 'Scheduled' || del.status === 'Partially delivered';
@@ -633,10 +666,10 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                 <div
                   key={del.id}
                   className={`bg-white rounded-3xl border p-4 shadow-xs transition-all space-y-3 ${isDone
-                      ? 'border-emerald-200/80 bg-emerald-50/20'
-                      : isMissed
-                        ? 'border-rose-200/80 bg-rose-50/20'
-                        : 'border-slate-200/90 shadow-sm'
+                    ? 'border-emerald-200/80 bg-emerald-50/20'
+                    : isMissed
+                      ? 'border-rose-200/80 bg-rose-50/20'
+                      : 'border-slate-200/90 shadow-sm'
                     }`}
                 >
                   {/* Card Header: Stop Number, House Number, Customer Name */}
@@ -644,10 +677,10 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                     <div className="flex items-start gap-2.5">
                       <span
                         className={`w-10 h-10 rounded-2xl flex items-center justify-center font-black text-xs shrink-0 shadow-2xs ${isDone
-                            ? 'bg-emerald-600 text-white'
-                            : isMissed
-                              ? 'bg-rose-600 text-white'
-                              : 'bg-slate-900 text-white'
+                          ? 'bg-emerald-600 text-white'
+                          : isMissed
+                            ? 'bg-rose-600 text-white'
+                            : 'bg-slate-900 text-white'
                           }`}
                       >
                         #{stopNumber}
@@ -790,7 +823,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                   </div>
                 </div>
               );
-            })}
+            })
+            )}
           </div>
         </div>
       )}
@@ -1073,8 +1107,8 @@ export const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ defaultTab
                 type="submit"
                 disabled={isSubmitting}
                 className={`flex-1 min-h-[44px] px-3 py-2.5 text-white rounded-xl font-black shadow-xs cursor-pointer ${actionType === 'miss'
-                    ? 'bg-rose-600 hover:bg-rose-700'
-                    : 'bg-emerald-600 hover:bg-emerald-700'
+                  ? 'bg-rose-600 hover:bg-rose-700'
+                  : 'bg-emerald-600 hover:bg-emerald-700'
                   }`}
               >
                 {isSubmitting ? 'Saving...' : actionType === 'miss' ? 'Confirm Missed' : 'Confirm Drop'}

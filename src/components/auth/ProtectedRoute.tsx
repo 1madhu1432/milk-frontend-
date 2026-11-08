@@ -23,8 +23,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     // 1. Customer Portal: Open directly with Customer session
     if (path.startsWith('/customer')) {
       if (!token || currentUser.role !== 'customer') {
-        const email = currentUser.email || 'customer@dailydairy.demo';
-        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Rajesh Reddy';
+        const email = currentUser.email || 'customer@milkerp.com';
+        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Customer';
         const demoPayload = {
           userId: 'user-cust-01',
           email,
@@ -44,8 +44,8 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     // 2. Delivery Rider Portal: Open directly with Delivery Staff session
     if (path.startsWith('/employee') || path.startsWith('/delivery')) {
       if (!token || currentUser.role !== 'employee') {
-        const email = currentUser.email || 'delivery@dailydairy.demo';
-        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Suresh Kumar Goud';
+        const email = currentUser.email || 'delivery@milkerp.com';
+        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Delivery Staff';
         const demoPayload = {
           userId: 'user-deliv-01',
           email,
@@ -66,7 +66,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     if (path.startsWith('/admin')) {
       if (!token || (currentUser.role !== 'admin' && currentUser.role !== 'super_admin')) {
         const email = currentUser.email || 'admin@vallycrm.com';
-        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Vally Admin';
+        const name = currentUser.name && currentUser.name !== 'Guest' ? currentUser.name : 'Administrator';
         const demoPayload = {
           userId: 'user-admin-vally',
           email,
