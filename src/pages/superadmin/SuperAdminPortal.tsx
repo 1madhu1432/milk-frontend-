@@ -1654,21 +1654,32 @@ export const SuperAdminPortal: React.FC = () => {
                     type="text"
                     required
                     value={tenantForm.name}
-                    onChange={e => setTenantForm({ ...tenantForm, name: e.target.value })}
+                    onChange={e => {
+                      const newName = e.target.value;
+                      const autoSlug = newName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+                      setTenantForm(prev => ({
+                        ...prev,
+                        name: newName,
+                        slug: prev.slug && !prev.slug.startsWith(prev.name.toLowerCase().slice(0, 3)) ? prev.slug : autoSlug,
+                      }));
+                    }}
                     className="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-white font-semibold"
-                    placeholder="e.g. Nandini Dairy Co"
+                    placeholder="e.g. Sri Krishna Dairy"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">Subdomain Slug</label>
+                  <label className="block text-xs font-bold text-slate-300 mb-1">Auto-Generated Subdomain</label>
                   <input
                     type="text"
                     required
                     value={tenantForm.slug}
                     onChange={e => setTenantForm({ ...tenantForm, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-white font-mono"
-                    placeholder="e.g. nandini"
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-950 border border-slate-700 text-emerald-400 font-mono font-bold"
+                    placeholder="e.g. krishna"
                   />
+                  <p className="text-[11px] text-emerald-400 font-mono mt-1 font-bold">
+                    👉 https://{tenantForm.slug || 'yourdairy'}.dairynexa.com
+                  </p>
                 </div>
               </div>
 

@@ -358,7 +358,8 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     (tenantData: Partial<Tenant>): Tenant => {
       const planId = tenantData.planId || 'starter';
       const plan = plans.find(p => p.id === planId) || plans[0];
-      const slug = tenantData.slug || `dairy-${Date.now().toString().slice(-4)}`;
+      const generatedSlug = tenantData.slug?.trim() || (tenantData.name ? tenantData.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') : `dairy-${Date.now().toString().slice(-4)}`);
+      const slug = generatedSlug || `dairy-${Date.now().toString().slice(-4)}`;
       const id = tenantData.id || `tenant-${slug}`;
 
       const newTenant: Tenant = {
@@ -393,10 +394,19 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         },
         domainConfig: tenantData.domainConfig || {
           subdomain: slug,
-          status: 'not_configured',
-          verificationToken: `milkerp-verify-token-${Math.random().toString(36).substring(2, 9)}`,
-          dnsRecords: [],
-          sslStatus: 'not_requested',
+          customDomain: `${slug}.dairynexa.com`,
+          status: 'active',
+          verificationToken: `dairynexa-verify-token-${Math.random().toString(36).substring(2, 9)}`,
+          dnsRecords: [
+            {
+              type: 'CNAME',
+              name: `${slug}.dairynexa.com`,
+              target: 'cname.vercel-dns.com',
+              verified: true,
+              ttl: '3600',
+            },
+          ],
+          sslStatus: 'issued',
           primaryDomain: 'subdomain',
         },
         integrationsSummary: tenantData.integrationsSummary || {
