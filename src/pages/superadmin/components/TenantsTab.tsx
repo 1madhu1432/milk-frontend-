@@ -294,11 +294,10 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
             return (
               <div
                 key={t.id}
-                className={`rounded-2xl p-5 bg-slate-900/80 border transition-all flex flex-col justify-between shadow-sm space-y-4 ${
-                  isSuspended
+                className={`rounded-2xl p-5 bg-slate-900/80 border transition-all flex flex-col justify-between shadow-sm space-y-4 ${isSuspended
                     ? 'border-rose-900/40 bg-slate-950/90'
                     : 'border-slate-800 hover:border-slate-700'
-                }`}
+                  }`}
               >
                 <div>
                   {/* Card Header */}
@@ -323,15 +322,14 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
                     </div>
 
                     <span
-                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${
-                        isActive
+                      className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${isActive
                           ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
                           : isTrial
-                          ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                          : isSuspended
-                          ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                          : 'bg-slate-700 text-slate-300 border-slate-600'
-                      }`}
+                            ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                            : isSuspended
+                              ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                              : 'bg-slate-700 text-slate-300 border-slate-600'
+                        }`}
                     >
                       {t.status}
                     </span>
@@ -576,13 +574,12 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
                     </div>
                     <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${
-                          usageSummary.percentages.customers >= 100
+                        className={`h-full rounded-full transition-all ${usageSummary.percentages.customers >= 100
                             ? 'bg-rose-500'
                             : usageSummary.percentages.customers >= 80
-                            ? 'bg-amber-500'
-                            : 'bg-emerald-500'
-                        }`}
+                              ? 'bg-amber-500'
+                              : 'bg-emerald-500'
+                          }`}
                         style={{ width: `${Math.min(usageSummary.percentages.customers, 100)}%` }}
                       />
                     </div>
@@ -599,13 +596,12 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
                     </div>
                     <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${
-                          usageSummary.percentages.deliveryStaff >= 100
+                        className={`h-full rounded-full transition-all ${usageSummary.percentages.deliveryStaff >= 100
                             ? 'bg-rose-500'
                             : usageSummary.percentages.deliveryStaff >= 80
-                            ? 'bg-amber-500'
-                            : 'bg-indigo-500'
-                        }`}
+                              ? 'bg-amber-500'
+                              : 'bg-indigo-500'
+                          }`}
                         style={{ width: `${Math.min(usageSummary.percentages.deliveryStaff, 100)}%` }}
                       />
                     </div>
@@ -622,13 +618,12 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
                     </div>
                     <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${
-                          usageSummary.percentages.routes >= 100
+                        className={`h-full rounded-full transition-all ${usageSummary.percentages.routes >= 100
                             ? 'bg-rose-500'
                             : usageSummary.percentages.routes >= 80
-                            ? 'bg-amber-500'
-                            : 'bg-purple-500'
-                        }`}
+                              ? 'bg-amber-500'
+                              : 'bg-purple-500'
+                          }`}
                         style={{ width: `${Math.min(usageSummary.percentages.routes, 100)}%` }}
                       />
                     </div>

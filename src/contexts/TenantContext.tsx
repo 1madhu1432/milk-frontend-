@@ -52,6 +52,79 @@ const TENANTS_STORAGE_KEY = 'dairynexa_multi_tenant_registry_v3';
 const CURRENT_TENANT_ID_KEY = 'dairynexa_active_tenant_id_v3';
 const TICKETS_STORAGE_KEY = 'dairynexa_platform_tickets_v3';
 
+function formatDairyName(slug: string): string {
+  if (!slug) return 'DairyNexa';
+  const cleaned = slug.replace(/[-_]+/g, ' ').trim();
+  const words = cleaned
+    .split(' ')
+    .filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+  if (words.toLowerCase().includes('dairy') || words.toLowerCase().includes('milk') || words.toLowerCase().includes('farm')) {
+    return words;
+  }
+  return `${words} Dairy Farm`;
+}
+
+function buildDynamicTenant(slug: string): Tenant {
+  const cleanSlug = slug.toLowerCase().replace(/[^a-z0-9-]/g, '') || 'dairy';
+  const dairyName = formatDairyName(cleanSlug);
+  return {
+    id: `tenant-${cleanSlug}`,
+    slug: cleanSlug,
+    name: dairyName,
+    ownerName: `${dairyName} Operations`,
+    ownerEmail: `admin@${cleanSlug}.com`,
+    ownerPhone: '+91 98000 00000',
+    createdAt: new Date().toISOString(),
+    status: 'active',
+    planId: 'growth',
+    subscription: {
+      planId: 'growth',
+      status: 'active',
+      currentPeriodStart: new Date().toISOString(),
+      currentPeriodEnd: new Date(Date.now() + 30 * 86400000).toISOString(),
+      billingInterval: 'monthly',
+      autoRenew: true,
+      paymentMethod: 'Razorpay Autopay',
+      amountPaid: 6999,
+    },
+    branding: {
+      dairyName: dairyName,
+      tagline: 'Farm-Fresh Milk Delivered Daily by 7:00 AM',
+      logoEmoji: '🥛',
+      primaryColor: '#059669',
+      accentColor: '#047857',
+      supportEmail: `support@${cleanSlug}.com`,
+      supportPhone: '+91 98000 00000',
+      address: 'Main Dairy Complex',
+      gstin: '36AAAAA0000A1Z5',
+    },
+    domainConfig: {
+      subdomain: cleanSlug,
+      customDomain: `${cleanSlug}.dairynexa.com`,
+      status: 'active',
+      verificationToken: `token-${cleanSlug}`,
+      dnsRecords: [],
+      sslStatus: 'issued',
+      primaryDomain: 'subdomain',
+    },
+    integrationsSummary: {
+      razorpayConfigured: true,
+      whatsappConfigured: true,
+      emailConfigured: true,
+      smsConfigured: true,
+    },
+    stats: {
+      customerCount: 120,
+      dailyVolumeLitres: 240,
+      activeRoutes: 3,
+      deliveryStaffCount: 3,
+      monthlyRevenue: 432000,
+    },
+  };
+}
+
 export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // Load tenants registry
   const [tenants, setTenants] = useState<Tenant[]>(() => {
@@ -85,13 +158,15 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const urlParams = new URLSearchParams(window.location.search);
         const querySlug = urlParams.get('dairy') || urlParams.get('tenant');
         if (querySlug) {
+          const clean = querySlug.toLowerCase();
           const matched = initialTenants.find(
             t =>
-              t.id.toLowerCase() === querySlug.toLowerCase() ||
-              t.slug.toLowerCase() === querySlug.toLowerCase() ||
-              t.domainConfig.subdomain.toLowerCase() === querySlug.toLowerCase()
+              t.id.toLowerCase() === clean ||
+              t.slug.toLowerCase() === clean ||
+              t.domainConfig.subdomain.toLowerCase() === clean
           );
           if (matched) return matched.id;
+          return `tenant-${clean}`;
         }
 
         // 2. Check Subdomain (e.g. madhu.dairynexa.com, madhu.diarynext.com, madhu.localhost)
@@ -111,6 +186,7 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
               t.id.toLowerCase() === sub
           );
           if (subMatched) return subMatched.id;
+          return `tenant-${sub}`;
         }
       } catch {
         // ignore url parsing issues
@@ -134,16 +210,23 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const urlParams = new URLSearchParams(window.location.search);
       const querySlug = urlParams.get('dairy') || urlParams.get('tenant');
       if (querySlug) {
+        const clean = querySlug.toLowerCase();
         const matched = tenants.find(
           t =>
-            t.id.toLowerCase() === querySlug.toLowerCase() ||
-            t.slug.toLowerCase() === querySlug.toLowerCase() ||
-            t.domainConfig.subdomain.toLowerCase() === querySlug.toLowerCase()
+            t.id.toLowerCase() === clean ||
+            t.slug.toLowerCase() === clean ||
+            t.domainConfig.subdomain.toLowerCase() === clean
         );
-        if (matched && matched.id !== currentTenantId) {
-          setCurrentTenantId(matched.id);
-          return;
+        if (matched) {
+          if (matched.id !== currentTenantId) {
+            setCurrentTenantId(matched.id);
+          }
+        } else {
+          const newTenant = buildDynamicTenant(querySlug);
+          setTenants(prev => [...prev, newTenant]);
+          setCurrentTenantId(newTenant.id);
         }
+        return;
       }
 
       // Subdomain check
@@ -161,8 +244,14 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             t.slug.toLowerCase() === sub ||
             t.id.toLowerCase() === sub
         );
-        if (subMatched && subMatched.id !== currentTenantId) {
-          setCurrentTenantId(subMatched.id);
+        if (subMatched) {
+          if (subMatched.id !== currentTenantId) {
+            setCurrentTenantId(subMatched.id);
+          }
+        } else {
+          const newTenant = buildDynamicTenant(sub);
+          setTenants(prev => [...prev, newTenant]);
+          setCurrentTenantId(newTenant.id);
         }
       }
     } catch {
@@ -187,8 +276,45 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const plans = initialTenantPlans;
 
-  // Resolve current active tenant object
+  // Resolve current active tenant object (prioritizing URL query param and subdomain)
   const currentTenant = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const querySlug = urlParams.get('dairy') || urlParams.get('tenant');
+        if (querySlug) {
+          const clean = querySlug.toLowerCase();
+          const matched = tenants.find(
+            t =>
+              t.id.toLowerCase() === clean ||
+              t.slug.toLowerCase() === clean ||
+              t.domainConfig.subdomain.toLowerCase() === clean
+          );
+          if (matched) return matched;
+          return buildDynamicTenant(querySlug);
+        }
+
+        const hostParts = window.location.hostname.split('.');
+        let sub = '';
+        if (hostParts.length > 2 && hostParts[0] !== 'www' && hostParts[0] !== 'localhost') {
+          sub = hostParts[0].toLowerCase();
+        } else if (hostParts.length === 2 && hostParts[1] === 'localhost' && hostParts[0] !== 'localhost') {
+          sub = hostParts[0].toLowerCase();
+        }
+        if (sub) {
+          const subMatched = tenants.find(
+            t =>
+              t.domainConfig.subdomain.toLowerCase() === sub ||
+              t.slug.toLowerCase() === sub ||
+              t.id.toLowerCase() === sub
+          );
+          if (subMatched) return subMatched;
+          return buildDynamicTenant(sub);
+        }
+      } catch {
+        // ignore
+      }
+    }
     return tenants.find(t => t.id === currentTenantId) || tenants[0] || initialTenants[0];
   }, [tenants, currentTenantId]);
 
