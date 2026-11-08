@@ -439,10 +439,10 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({ defaultTab }) =>
                     <div
                       key={day.ymd}
                       className={`p-3.5 rounded-2xl border text-center transition-all ${day.isToday
-                          ? 'bg-emerald-50/90 border-emerald-400 shadow-xs ring-1 ring-emerald-400'
-                          : day.isPaused
-                            ? 'bg-rose-50/50 border-rose-200 opacity-80'
-                            : 'bg-slate-50/80 border-slate-200 hover:border-slate-300'
+                        ? 'bg-emerald-50/90 border-emerald-400 shadow-xs ring-1 ring-emerald-400'
+                        : day.isPaused
+                          ? 'bg-rose-50/50 border-rose-200 opacity-80'
+                          : 'bg-slate-50/80 border-slate-200 hover:border-slate-300'
                         }`}
                     >
                       <span className={`text-[10px] font-black uppercase tracking-wider block ${day.isToday ? 'text-emerald-800' : 'text-slate-400'
@@ -763,19 +763,10 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({ defaultTab }) =>
                     <span>Pay Now</span>
                   </button>
                 ) : (
-                  <button
-                    onClick={() =>
-                      setGatewayModal({
-                        isOpen: true,
-                        amount: 500,
-                        title: `Advance Milk Wallet Recharge (${customer.name})`,
-                      })
-                    }
-                    className="px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-black shadow-xs cursor-pointer flex items-center gap-1.5"
-                  >
-                    <CreditCard className="w-4 h-4" />
-                    <span>⚡ Test Advance Pay (₹500)</span>
-                  </button>
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-800 font-bold bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-200">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <span>All Bills Settled</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -1191,8 +1182,8 @@ export const CustomerPortal: React.FC<CustomerPortalProps> = ({ defaultTab }) =>
                   key={qty}
                   onClick={() => setSubForm(prev => ({ ...prev, dailyQuantity: qty }))}
                   className={`py-2.5 rounded-xl text-xs font-black border transition-all cursor-pointer ${subForm.dailyQuantity === qty
-                      ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
+                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
                     }`}
                 >
                   {qty} L

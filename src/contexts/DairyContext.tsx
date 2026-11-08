@@ -130,7 +130,7 @@ interface DairyContextType {
 
 const DairyContext = createContext<DairyContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'milkerp_public_live_state_v1';
+const STORAGE_KEY = 'milkerp_production_live_v2';
 
 function emitBusinessEvent(eventType: string, detail: Record<string, any>) {
   if (typeof window !== 'undefined') {
@@ -140,12 +140,13 @@ function emitBusinessEvent(eventType: string, detail: Record<string, any>) {
 
 function loadInitialState() {
   if (typeof window !== 'undefined' && window.localStorage) {
-    // Purge all legacy dummy data keys
+    // Purge all legacy dummy data and test keys
     localStorage.removeItem('harish_dairy_app_state_v3');
     localStorage.removeItem('harish_dairy_app_state_v2');
     localStorage.removeItem('harish_dairy_state_v2');
     localStorage.removeItem('milkerp_data_mode');
     localStorage.removeItem('milkerp_clean_production_state_v1');
+    localStorage.removeItem('milkerp_public_live_state_v1');
 
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -167,7 +168,12 @@ function loadInitialState() {
             productOrders: parsed.productOrders || [],
             stockTransactions: parsed.stockTransactions || [],
             invoices: parsed.invoices || [],
-            customerPayments: parsed.customerPayments || [],
+            customerPayments: (parsed.customerPayments || []).filter(
+              (p: any) =>
+                !p.notes?.toLowerCase().includes('test') &&
+                !p.notes?.toLowerCase().includes('sandbox') &&
+                !p.notes?.toLowerCase().includes('simulator')
+            ),
             notificationLogs: parsed.notificationLogs || [],
           };
         }
