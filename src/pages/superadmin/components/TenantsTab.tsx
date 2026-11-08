@@ -21,6 +21,10 @@ import {
   FileText,
   RefreshCw,
   Edit,
+  Share2,
+  Copy,
+  ExternalLink,
+  Check,
 } from 'lucide-react';
 import { superAdminApi, TenantUsageSummary, TenantSubscriptionHistory } from '../../../services/api/superAdminApi';
 
@@ -97,6 +101,18 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
   const [reactivateReason, setReactivateReason] = useState<string>('');
   const [submittingReactivate, setSubmittingReactivate] = useState<boolean>(false);
   const [reactivateError, setReactivateError] = useState<string>('');
+
+  // Share Links Modal State
+  const [selectedShareTenant, setSelectedShareTenant] = useState<any | null>(null);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const handleCopy = (key: string, text: string) => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text);
+    }
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 2000);
+  };
 
   // Handle open usage summary modal
   const handleOpenUsage = async (tenant: any) => {
@@ -302,7 +318,7 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
                         <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
                           {t.name}
                         </h3>
-                        <p className="text-xs text-indigo-300 font-mono">{t.slug}.milkerp.com</p>
+                        <p className="text-xs text-emerald-400 font-mono font-bold">{t.slug}.dairynexa.com</p>
                       </div>
                     </div>
 
@@ -362,6 +378,15 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
                     >
                       <span>Impersonate</span>
                       <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+
+                    <button
+                      onClick={() => setSelectedShareTenant(t)}
+                      className="px-2.5 py-1.5 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700/60 text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1 cursor-pointer"
+                      title="Share Portal URLs for Customers, Delivery Boys & Admin"
+                    >
+                      <Share2 className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Share Links</span>
                     </button>
 
                     <button
@@ -841,6 +866,209 @@ export const TenantsTab: React.FC<TenantsTabProps> = ({
           </form>
         </div>
       )}
+
+      {/* =================================================================== */}
+      {/* MODAL 4: SHAREABLE PORTAL URLS FOR TENANT                          */}
+      {/* =================================================================== */}
+      {selectedShareTenant && (() => {
+        const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
+        const isLocal = origin.includes('localhost') || origin.includes('127.0.0.1');
+        const slug = selectedShareTenant.slug || 'madhu';
+        const dairyTitle = selectedShareTenant.name || 'Dairy';
+
+        const customerUrl = `${origin}/login/customer?dairy=${slug}`;
+        const customerSubdomain = isLocal ? `http://${slug}.localhost:5173/login/customer` : `https://${slug}.dairynexa.com/login/customer`;
+
+        const deliveryUrl = `${origin}/login/delivery?dairy=${slug}`;
+        const deliverySubdomain = isLocal ? `http://${slug}.localhost:5173/login/delivery` : `https://${slug}.dairynexa.com/login/delivery`;
+
+        const adminUrl = `${origin}/login/admin?dairy=${slug}`;
+        const adminSubdomain = isLocal ? `http://${slug}.localhost:5173/login/admin` : `https://${slug}.dairynexa.com/login/admin`;
+
+        const waMessage = `Namaste! Welcome to ${dairyTitle}. Manage your daily doorstep milk delivery, weekday quotas, and pay bills easily online:\n${customerUrl}`;
+
+        return (
+          <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+            <div className="bg-slate-900 border border-emerald-500/30 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-scale-up text-white">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-xl shadow-inner">
+                    {selectedShareTenant.logoEmoji || '🥛'}
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-white flex items-center gap-1.5">
+                      Share Portal Links
+                    </h3>
+                    <p className="text-xs text-emerald-400 font-semibold font-mono">
+                      {dairyTitle} • slug: {slug}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedShareTenant(null)}
+                  className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Send these direct links to customers, delivery boys, or your dairy manager. The login screen automatically brands itself for <strong>{dairyTitle}</strong>.
+              </p>
+
+              {/* Links List */}
+              <div className="space-y-3.5">
+                {/* 1. Customer Portal */}
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-blue-900/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-blue-400 flex items-center gap-1.5">
+                      🥛 Customer / Household Doorstep Portal
+                    </span>
+                    <span className="text-[10px] font-mono bg-blue-500/10 text-blue-300 px-2 py-0.5 rounded-full border border-blue-500/20 font-bold">
+                      For Subscribers
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={customerUrl}
+                      className="flex-1 bg-slate-900 border border-slate-800 text-slate-300 font-mono text-[11px] px-3 py-1.5 rounded-xl truncate select-all"
+                    />
+                    <button
+                      onClick={() => handleCopy('customer', customerUrl)}
+                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer transition-all shadow-sm"
+                    >
+                      {copiedKey === 'customer' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 text-blue-200" />}
+                      <span>{copiedKey === 'customer' ? 'Copied!' : 'Copy'}</span>
+                    </button>
+                    <a
+                      href={customerUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 transition-all cursor-pointer"
+                      title="Open link in new tab"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-mono">
+                    Subdomain URL: <span className="text-slate-400">{customerSubdomain}</span>
+                  </div>
+                </div>
+
+                {/* 2. Delivery Boy Portal */}
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-teal-900/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-teal-400 flex items-center gap-1.5">
+                      🚚 Delivery Staff / Rider App
+                    </span>
+                    <span className="text-[10px] font-mono bg-teal-500/10 text-teal-300 px-2 py-0.5 rounded-full border border-teal-500/20 font-bold">
+                      For Route Riders
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={deliveryUrl}
+                      className="flex-1 bg-slate-900 border border-slate-800 text-slate-300 font-mono text-[11px] px-3 py-1.5 rounded-xl truncate select-all"
+                    />
+                    <button
+                      onClick={() => handleCopy('delivery', deliveryUrl)}
+                      className="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer transition-all shadow-sm"
+                    >
+                      {copiedKey === 'delivery' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 text-teal-200" />}
+                      <span>{copiedKey === 'delivery' ? 'Copied!' : 'Copy'}</span>
+                    </button>
+                    <a
+                      href={deliveryUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 transition-all cursor-pointer"
+                      title="Open link in new tab"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-mono">
+                    Subdomain URL: <span className="text-slate-400">{deliverySubdomain}</span>
+                  </div>
+                </div>
+
+                {/* 3. Admin ERP */}
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-emerald-900/40 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-emerald-400 flex items-center gap-1.5">
+                      🏢 Dairy Owner / Admin ERP Portal
+                    </span>
+                    <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-300 px-2 py-0.5 rounded-full border border-emerald-500/20 font-bold">
+                      For Dairy Operators
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={adminUrl}
+                      className="flex-1 bg-slate-900 border border-slate-800 text-slate-300 font-mono text-[11px] px-3 py-1.5 rounded-xl truncate select-all"
+                    />
+                    <button
+                      onClick={() => handleCopy('admin', adminUrl)}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 cursor-pointer transition-all shadow-sm"
+                    >
+                      {copiedKey === 'admin' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 text-emerald-200" />}
+                      <span>{copiedKey === 'admin' ? 'Copied!' : 'Copy'}</span>
+                    </button>
+                    <a
+                      href={adminUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-xl border border-slate-700 transition-all cursor-pointer"
+                      title="Open link in new tab"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                  <div className="text-[10px] text-slate-500 font-mono">
+                    Subdomain URL: <span className="text-slate-400">{adminSubdomain}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Ready-to-Send WhatsApp Message */}
+              <div className="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-300">💬 Ready-to-Send WhatsApp Invite</span>
+                  <button
+                    onClick={() => handleCopy('whatsapp', waMessage)}
+                    className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer transition-colors"
+                  >
+                    {copiedKey === 'whatsapp' ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    <span>{copiedKey === 'whatsapp' ? 'Copied Message!' : 'Copy Message'}</span>
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-400 bg-slate-900 p-2.5 rounded-xl font-sans whitespace-pre-line border border-slate-800">
+                  {waMessage}
+                </p>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="pt-2 border-t border-slate-800 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setSelectedShareTenant(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold cursor-pointer transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };
