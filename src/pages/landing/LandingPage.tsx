@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   Truck,
   UserCircle,
-  ShieldAlert,
   ArrowRight,
   CheckCircle2,
   Calendar,
@@ -18,7 +17,6 @@ import {
   Zap,
   BarChart3,
   Clock,
-  ExternalLink,
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
@@ -41,65 +39,6 @@ export const LandingPage: React.FC = () => {
       navigate('/super-admin');
     }
   };
-
-  const portalModules = [
-    {
-      id: 'admin',
-      title: 'Dairy Admin / Owner ERP',
-      roleSubtitle: 'Complete Operations & Business Console',
-      description: 'Manage customers, route dispatches, milk procurement with FAT/SNF rates, inventory silos, and instant monthly billing.',
-      icon: ShieldCheck,
-      emoji: '🏢',
-      path: '/login/admin',
-      directPath: '/admin/dashboard',
-      badge: 'Dairy ERP Portal',
-      badgeClass: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-      btnClass: 'from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500',
-      actionRole: 'admin' as const,
-    },
-    {
-      id: 'customer',
-      title: 'Customer / Household Portal',
-      roleSubtitle: 'Subscriber Self-Service Web App',
-      description: 'Daily milk calendar, quota changes, vacation pause/resume, doorstep drop notes, and 1-tap Razorpay & UPI bill payments.',
-      icon: UserCircle,
-      emoji: '🥛',
-      path: '/login/customer',
-      directPath: '/customer/home',
-      badge: 'Subscriber Portal',
-      badgeClass: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-      btnClass: 'from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500',
-      actionRole: 'customer' as const,
-    },
-    {
-      id: 'delivery',
-      title: 'Delivery Staff Portal',
-      roleSubtitle: 'Morning & Evening Route Rider App',
-      description: 'Mobile-first sequential route stop checklist, quick quantity adjust, customer doorstep instructions, and instant proof of drop.',
-      icon: Truck,
-      emoji: '🚚',
-      path: '/login/delivery',
-      directPath: '/employee/deliveries',
-      badge: 'Delivery App',
-      badgeClass: 'bg-teal-500/15 text-teal-300 border-teal-500/30',
-      btnClass: 'from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500',
-      actionRole: 'employee' as const,
-    },
-    {
-      id: 'super-admin',
-      title: 'Super Admin Platform Console',
-      roleSubtitle: 'Multi-Tenant SaaS Management',
-      description: 'Global SaaS dashboard, provision dairy businesses, subscription tiers, platform revenue, and custom domain white-labeling.',
-      icon: ShieldAlert,
-      emoji: '👑',
-      path: '/login/super-admin',
-      directPath: '/super-admin',
-      badge: 'SaaS Platform Owner',
-      badgeClass: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
-      btnClass: 'from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500',
-      actionRole: 'super_admin' as const,
-    },
-  ];
 
   const coreFeatures = [
     {
@@ -198,7 +137,6 @@ export const LandingPage: React.FC = () => {
           </div>
 
           <nav className="hidden md:flex items-center gap-8 text-xs font-bold text-slate-300">
-            <a href="#portals" className="hover:text-emerald-400 transition-colors">Portals</a>
             <a href="#features" className="hover:text-emerald-400 transition-colors">Features</a>
             <a href="#workflow" className="hover:text-emerald-400 transition-colors">How It Works</a>
             <a href="#demo" className="hover:text-emerald-400 transition-colors">Instant Demo</a>
@@ -294,65 +232,6 @@ export const LandingPage: React.FC = () => {
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-1 block">
               Cloud Managed
             </span>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Interactive Portals Selector Section */}
-      <section id="portals" className="py-16 md:py-24 bg-gradient-to-b from-[#07090E] via-[#0B0F17] to-[#07090E] border-y border-slate-800/80 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-14">
-            <span className="text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-              Interactive Portals
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white mt-3">
-              One Unified System, 4 Specialized Portals
-            </h2>
-            <p className="text-sm text-slate-400 mt-2 font-medium">
-              Select any portal below to enter your workspace or use the dedicated login page.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {portalModules.map(module => (
-              <div
-                key={module.id}
-                className="rounded-3xl bg-slate-900/70 border border-slate-800 p-6 flex flex-col justify-between hover:border-slate-700 hover:bg-slate-900/90 transition-all group hover:-translate-y-1 shadow-xl"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-800/80 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform shadow-inner">
-                      {module.emoji}
-                    </div>
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border ${module.badgeClass}`}>
-                      {module.badge}
-                    </span>
-                  </div>
-
-                  <h3 className="text-lg font-black text-white tracking-tight">{module.title}</h3>
-                  <p className="text-xs font-bold text-emerald-400 mt-0.5">{module.roleSubtitle}</p>
-                  <p className="text-xs text-slate-400 mt-3 leading-relaxed">{module.description}</p>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-slate-800/80 space-y-2.5">
-                  <button
-                    onClick={() => handleQuickDemo(module.actionRole)}
-                    className={`w-full py-2.5 rounded-xl text-xs font-black bg-gradient-to-r ${module.btnClass} text-white shadow-md flex items-center justify-center gap-1.5 cursor-pointer group hover:shadow-lg transition-all`}
-                  >
-                    <span>Launch Portal</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                  </button>
-
-                  <button
-                    onClick={() => navigate(module.path)}
-                    className="w-full py-1.5 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white bg-slate-800/40 hover:bg-slate-800 border border-slate-700/50 flex items-center justify-center gap-1 transition-all cursor-pointer"
-                  >
-                    <span>Separate Login Page</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
