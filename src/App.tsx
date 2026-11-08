@@ -14,6 +14,7 @@ import { AdminLoginPage } from './pages/auth/AdminLoginPage';
 import { DeliveryLoginPage } from './pages/auth/DeliveryLoginPage';
 import { CustomerLoginPage } from './pages/auth/CustomerLoginPage';
 import { SuperAdminLoginPage } from './pages/auth/SuperAdminLoginPage';
+import { TenantActivationPage } from './pages/auth/TenantActivationPage';
 import DemoMain from './components/ui/demo';
 
 // Super Admin Module (Phase 1 Platform SaaS Console)
@@ -65,6 +66,7 @@ export const App: React.FC = () => {
                 <Route path="/login/delivery" element={<DeliveryLoginPage />} />
                 <Route path="/login/customer" element={<CustomerLoginPage />} />
                 <Route path="/login/super-admin" element={<SuperAdminLoginPage />} />
+                <Route path="/activate" element={<TenantActivationPage />} />
                 <Route path="/admin/login" element={<Navigate to="/login/admin" replace />} />
                 <Route path="/employee/login" element={<Navigate to="/login/delivery" replace />} />
                 <Route path="/delivery/login" element={<Navigate to="/login/delivery" replace />} />
