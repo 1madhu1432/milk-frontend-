@@ -88,13 +88,21 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           if (matched) return matched.id;
         }
 
-        // 2. Check Subdomain (e.g. krishna.dairynexa.com)
+        // 2. Check Subdomain (e.g. madhu.dairynexa.com, madhu.diarynext.com, madhu.localhost)
         const hostParts = window.location.hostname.split('.');
+        let sub = '';
         if (hostParts.length > 2 && hostParts[0] !== 'www' && hostParts[0] !== 'localhost') {
+          sub = hostParts[0].toLowerCase();
+        } else if (hostParts.length === 2 && hostParts[1] === 'localhost' && hostParts[0] !== 'localhost') {
+          sub = hostParts[0].toLowerCase();
+        }
+
+        if (sub) {
           const subMatched = initialTenants.find(
             t =>
-              t.domainConfig.subdomain.toLowerCase() === hostParts[0].toLowerCase() ||
-              t.slug.toLowerCase() === hostParts[0].toLowerCase()
+              t.domainConfig.subdomain.toLowerCase() === sub ||
+              t.slug.toLowerCase() === sub ||
+              t.id.toLowerCase() === sub
           );
           if (subMatched) return subMatched.id;
         }
@@ -111,7 +119,7 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return 'tenant-dairynexa';
   });
 
-  // Listen to URL query parameter changes
+  // Listen to URL query parameter or subdomain changes
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
@@ -126,6 +134,27 @@ export const TenantProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         );
         if (matched && matched.id !== currentTenantId) {
           setCurrentTenantId(matched.id);
+          return;
+        }
+      }
+
+      // Subdomain check
+      const hostParts = window.location.hostname.split('.');
+      let sub = '';
+      if (hostParts.length > 2 && hostParts[0] !== 'www' && hostParts[0] !== 'localhost') {
+        sub = hostParts[0].toLowerCase();
+      } else if (hostParts.length === 2 && hostParts[1] === 'localhost' && hostParts[0] !== 'localhost') {
+        sub = hostParts[0].toLowerCase();
+      }
+      if (sub) {
+        const subMatched = tenants.find(
+          t =>
+            t.domainConfig.subdomain.toLowerCase() === sub ||
+            t.slug.toLowerCase() === sub ||
+            t.id.toLowerCase() === sub
+        );
+        if (subMatched && subMatched.id !== currentTenantId) {
+          setCurrentTenantId(subMatched.id);
         }
       }
     } catch {
