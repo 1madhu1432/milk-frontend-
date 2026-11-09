@@ -42,41 +42,32 @@ export const LoginPage: React.FC = () => {
 
   const [activeRoleForGoogle, setActiveRoleForGoogle] = useState<'admin' | 'employee' | 'customer' | 'auto'>('auto');
 
-  const handleOpenGoogleForRole = (role: 'admin' | 'employee' | 'customer' | 'auto') => {
-    if (role === 'admin') {
-      login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
-      navigate('/admin/dashboard');
-    } else if (role === 'employee') {
-      login('employee', 'delivery@dairynexa.com', 'Delivery Staff', 'user-deliv-01');
-      navigate('/employee/deliveries');
-    } else if (role === 'customer') {
-      login('customer', 'customer@dairynexa.com', 'Valued Subscriber', 'user-cust-01');
-      navigate('/customer/home');
-    } else {
-      login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
-      navigate('/admin/dashboard');
-    }
-  };
+  const [googleError, setGoogleError] = useState<string | null>(null);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
+        setGoogleError(null);
         const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         });
         const userInfo = await userInfoRes.json();
+        if (!userInfo.email) {
+          throw new Error('Google did not return a valid email address');
+        }
         const role = activeRoleForGoogle === 'auto' ? 'admin' : activeRoleForGoogle;
         login(role, userInfo.email, userInfo.name || 'User', `user-${role}-01`);
         if (role === 'admin') navigate('/admin/dashboard');
         else if (role === 'employee') navigate('/employee/deliveries');
         else if (role === 'customer') navigate('/customer/home');
         else navigate('/admin/dashboard');
-      } catch (err) {
-        handleOpenGoogleForRole(activeRoleForGoogle);
+      } catch (err: any) {
+        console.error('Google login error:', err);
+        setGoogleError(err?.message || 'Google sign-in failed. Please try password login.');
       }
     },
-    onError: () => {
-      handleOpenGoogleForRole(activeRoleForGoogle);
+    onError: (error) => {
+      console.warn('Google sign-in closed or unavailable:', error);
     },
   });
 

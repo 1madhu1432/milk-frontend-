@@ -14,12 +14,12 @@ export const AdminLoginPage: React.FC = () => {
   const dairyName = branding.name || 'DairyNexa';
 
   const handleSignIn = async (email: string, passwordPlain: string) => {
-    try {
-      const res = await authApi.login(email.trim(), passwordPlain);
-      login('admin', res.user.email, res.user.name, res.user.id);
-      navigate('/admin/dashboard');
-    } catch {
-      login('admin', email.trim(), email.split('@')[0], 'user-admin-01');
+    const res = await authApi.login(email.trim(), passwordPlain);
+    const targetRole = res.user.role === 'SUPER_ADMIN' ? 'admin' : (res.user.role.toLowerCase() as any);
+    login(targetRole, res.user.email, res.user.name, res.user.id);
+    if (res.user.role === 'SUPER_ADMIN') {
+      navigate('/super-admin');
+    } else {
       navigate('/admin/dashboard');
     }
   };
@@ -31,18 +31,16 @@ export const AdminLoginPage: React.FC = () => {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         });
         const userInfo = await userInfoRes.json();
-        login('admin', userInfo.email, userInfo.name || 'Dairy Owner (Admin)', 'user-admin-01');
-        navigate('/admin/dashboard');
+        if (userInfo.email) {
+          login('admin', userInfo.email, userInfo.name || 'Dairy Owner (Admin)', 'user-admin-01');
+          navigate('/admin/dashboard');
+        }
       } catch (err) {
         console.error('Failed to fetch Google profile', err);
-        login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
-        navigate('/admin/dashboard');
       }
     },
     onError: (error) => {
       console.warn('Google sign-in closed or unavailable:', error);
-      login('admin', 'admin@dairynexa.com', 'Dairy Owner (Admin)', 'user-admin-01');
-      navigate('/admin/dashboard');
     },
   });
 

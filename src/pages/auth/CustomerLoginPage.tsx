@@ -14,14 +14,9 @@ export const CustomerLoginPage: React.FC = () => {
   const dairyName = branding.name || 'DairyNexa';
 
   const handleSignIn = async (email: string, passwordPlain: string) => {
-    try {
-      const res = await authApi.login(email.trim(), passwordPlain);
-      login('customer', res.user.email, res.user.name, res.user.id);
-      navigate('/customer/home');
-    } catch {
-      login('customer', email.trim(), email.split('@')[0], 'user-cust-01');
-      navigate('/customer/home');
-    }
+    const res = await authApi.login(email.trim(), passwordPlain);
+    login('customer', res.user.email, res.user.name, res.user.id);
+    navigate('/customer/home');
   };
 
   const googleLogin = useGoogleLogin({
@@ -31,18 +26,16 @@ export const CustomerLoginPage: React.FC = () => {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         });
         const userInfo = await userInfoRes.json();
-        login('customer', userInfo.email, userInfo.name || 'Valued Subscriber', 'user-cust-01');
-        navigate('/customer/home');
+        if (userInfo.email) {
+          login('customer', userInfo.email, userInfo.name || 'Valued Subscriber', 'user-cust-01');
+          navigate('/customer/home');
+        }
       } catch (err) {
         console.error('Failed to fetch Google profile', err);
-        login('customer', 'customer@dairynexa.com', 'Valued Subscriber', 'user-cust-01');
-        navigate('/customer/home');
       }
     },
     onError: (error) => {
       console.warn('Google sign-in closed or unavailable:', error);
-      login('customer', 'customer@dairynexa.com', 'Valued Subscriber', 'user-cust-01');
-      navigate('/customer/home');
     },
   });
 

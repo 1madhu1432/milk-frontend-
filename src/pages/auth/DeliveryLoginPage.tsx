@@ -14,14 +14,9 @@ export const DeliveryLoginPage: React.FC = () => {
   const dairyName = branding.name || 'DairyNexa';
 
   const handleSignIn = async (email: string, passwordPlain: string) => {
-    try {
-      const res = await authApi.login(email.trim(), passwordPlain);
-      login('employee', res.user.email, res.user.name, res.user.id);
-      navigate('/employee/deliveries');
-    } catch {
-      login('employee', email.trim(), email.split('@')[0], 'user-deliv-01');
-      navigate('/employee/deliveries');
-    }
+    const res = await authApi.login(email.trim(), passwordPlain);
+    login('employee', res.user.email, res.user.name, res.user.id);
+    navigate('/employee/deliveries');
   };
 
   const googleLogin = useGoogleLogin({
@@ -31,18 +26,16 @@ export const DeliveryLoginPage: React.FC = () => {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         });
         const userInfo = await userInfoRes.json();
-        login('employee', userInfo.email, userInfo.name || 'Delivery Staff', 'user-deliv-01');
-        navigate('/employee/deliveries');
+        if (userInfo.email) {
+          login('employee', userInfo.email, userInfo.name || 'Delivery Staff', 'user-deliv-01');
+          navigate('/employee/deliveries');
+        }
       } catch (err) {
         console.error('Failed to fetch Google profile', err);
-        login('employee', 'delivery@dairynexa.com', 'Delivery Staff', 'user-deliv-01');
-        navigate('/employee/deliveries');
       }
     },
     onError: (error) => {
       console.warn('Google sign-in closed or unavailable:', error);
-      login('employee', 'delivery@dairynexa.com', 'Delivery Staff', 'user-deliv-01');
-      navigate('/employee/deliveries');
     },
   });
 

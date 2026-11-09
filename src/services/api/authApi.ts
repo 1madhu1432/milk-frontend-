@@ -23,42 +23,18 @@ export interface LoginResponse {
 
 export const authApi = {
   login: async (email: string, passwordPlain: string): Promise<LoginResponse> => {
-    try {
-      const res = await api.post<LoginResponse>('/auth/login', {
-        email,
-        password: passwordPlain,
-      });
-      if (res.tokens?.accessToken) {
-        localStorage.setItem('milkerp_access_token', res.tokens.accessToken);
-        localStorage.setItem('milkerp_refresh_token', res.tokens.refreshToken);
-        if (res.user.tenantId) {
-          localStorage.setItem('milkerp_active_tenant_id', res.user.tenantId);
-        }
+    const res = await api.post<LoginResponse>('/auth/login', {
+      email: email.trim(),
+      password: passwordPlain,
+    });
+    if (res.tokens?.accessToken) {
+      localStorage.setItem('milkerp_access_token', res.tokens.accessToken);
+      localStorage.setItem('milkerp_refresh_token', res.tokens.refreshToken);
+      if (res.user.tenantId) {
+        localStorage.setItem('milkerp_active_tenant_id', res.user.tenantId);
       }
-      return res;
-    } catch (err: any) {
-      // Graceful fallback for platform owner if network or backend connection is interrupted
-      if (email === 'platform.owner@milkerp.com' || err.message?.includes('fetch') || err.name === 'TypeError') {
-        const mockSuperToken = `header.${btoa(JSON.stringify({ id: 'user-super-01', email, role: 'SUPER_ADMIN', name: 'Platform Super Admin' }))}.sig`;
-        localStorage.setItem('milkerp_access_token', mockSuperToken);
-        localStorage.setItem('milkerp_refresh_token', mockSuperToken);
-        return {
-          user: {
-            id: 'user-super-01',
-            email,
-            name: 'Platform Super Admin',
-            role: 'SUPER_ADMIN',
-            tenantId: null,
-            tenant: null,
-          },
-          tokens: {
-            accessToken: mockSuperToken,
-            refreshToken: mockSuperToken,
-          },
-        };
-      }
-      throw err;
     }
+    return res;
   },
 
   loginWithGoogle: async (
