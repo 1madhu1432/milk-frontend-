@@ -10,14 +10,9 @@ export const SuperAdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSignIn = async (email: string, passwordPlain: string) => {
-    try {
-      const res = await authApi.login(email.trim(), passwordPlain);
-      login('super_admin', res.user.email, res.user.name, res.user.id);
-      navigate('/super-admin');
-    } catch {
-      login('super_admin', email.trim(), email.split('@')[0], 'user-super-01');
-      navigate('/super-admin');
-    }
+    const res = await authApi.login(email.trim(), passwordPlain);
+    login('super_admin', res.user.email, res.user.name, res.user.id);
+    navigate('/super-admin');
   };
 
   const googleLogin = useGoogleLogin({
@@ -27,18 +22,16 @@ export const SuperAdminLoginPage: React.FC = () => {
           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
         });
         const userInfo = await userInfoRes.json();
-        login('super_admin', userInfo.email, userInfo.name || 'DairyNexa Platform Owner', 'user-super-01');
-        navigate('/super-admin');
+        if (userInfo.email) {
+          login('super_admin', userInfo.email, userInfo.name || 'DairyNexa Platform Owner', 'user-super-01');
+          navigate('/super-admin');
+        }
       } catch (err) {
         console.error('Failed to fetch Google profile', err);
-        login('super_admin', 'platform.owner@dairynexa.com', 'DairyNexa Platform Owner', 'user-super-01');
-        navigate('/super-admin');
       }
     },
     onError: (error) => {
       console.warn('Google sign-in closed or unavailable:', error);
-      login('super_admin', 'platform.owner@dairynexa.com', 'DairyNexa Platform Owner', 'user-super-01');
-      navigate('/super-admin');
     },
   });
 
