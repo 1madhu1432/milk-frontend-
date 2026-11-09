@@ -133,9 +133,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       )}
 
       <aside
-        className={`fixed md:sticky top-0 md:top-16 z-40 h-screen md:h-[calc(100vh-4rem)] w-64 bg-white/95 backdrop-blur-md border-r border-slate-200/80 flex flex-col transition-transform duration-200 ease-in-out shrink-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
+        className={`fixed md:sticky top-0 md:top-16 z-40 h-screen md:h-[calc(100vh-4rem)] w-64 bg-white/95 backdrop-blur-md border-r border-slate-200/80 flex flex-col transition-transform duration-200 ease-in-out shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
       >
         {/* Mobile Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-100 md:hidden">
@@ -162,13 +161,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               Signed In As
             </span>
             <span
-              className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                currentUser.role === 'admin'
-                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                  : currentUser.role === 'employee'
+              className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${currentUser.role === 'admin'
+                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                : currentUser.role === 'employee'
                   ? 'bg-teal-100 text-teal-800 border border-teal-300'
                   : 'bg-blue-100 text-blue-800 border border-blue-300'
-              }`}
+                }`}
             >
               {currentUser.role === 'admin' ? 'Owner / Admin' : currentUser.role === 'employee' ? 'Delivery Driver' : 'Customer'}
             </span>
@@ -199,10 +197,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       if (window.innerWidth < 768) onClose();
                     }}
                     className={({ isActive }) =>
-                      `flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${
-                        isActive
-                          ? 'bg-gradient-to-r from-emerald-600 to-green-700 text-white shadow-xs font-bold shadow-emerald-700/20'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+                      `flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all group ${isActive
+                        ? 'bg-gradient-to-r from-emerald-600 to-green-700 text-white shadow-xs font-bold shadow-emerald-700/20'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
                       }`
                     }
                   >
@@ -210,19 +207,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                       <>
                         <div className="flex items-center gap-2.5">
                           <Icon
-                            className={`w-4 h-4 transition-transform group-hover:scale-110 ${
-                              isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-700'
-                            }`}
+                            className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-700'
+                              }`}
                           />
                           <span className="truncate">{item.label}</span>
                         </div>
                         {item.badge && (
                           <span
-                            className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                              isActive
-                                ? 'bg-white/20 text-white'
-                                : 'bg-emerald-100 text-emerald-800'
-                            }`}
+                            className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${isActive
+                              ? 'bg-white/20 text-white'
+                              : 'bg-emerald-100 text-emerald-800'
+                              }`}
                           >
                             {item.badge}
                           </span>
