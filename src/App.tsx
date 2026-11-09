@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TenantBrandingProvider } from './contexts/TenantBrandingContext';
 import { TenantProvider } from './contexts/TenantContext';
 import { DairyProvider } from './contexts/DairyContext';
@@ -52,7 +52,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 export const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <BrowserRouter>
+      <HashRouter>
         <TenantBrandingProvider>
           <TenantProvider>
             <DairyProvider>
@@ -176,7 +176,7 @@ export const App: React.FC = () => {
           </DairyProvider>
         </TenantProvider>
       </TenantBrandingProvider>
-    </BrowserRouter>
+    </HashRouter>
   </ErrorBoundary>
   );
 };
