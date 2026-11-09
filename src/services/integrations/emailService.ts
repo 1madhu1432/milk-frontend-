@@ -27,8 +27,10 @@ export interface EmailSendResult {
   isSimulated: boolean;
 }
 
+import { API_BASE_URL } from '../../config/api';
+
 export class EmailIntegrationService {
-  private static backendUrl = import.meta.env.VITE_BACKEND_API_URL || '/api/v1';
+  private static backendUrl = API_BASE_URL;
 
   /**
    * Tests SMTP handshake or transactional API key against backend proxy

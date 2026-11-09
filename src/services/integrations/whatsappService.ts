@@ -26,8 +26,10 @@ export interface WhatsAppSendResult {
   isSimulated: boolean;
 }
 
+import { API_BASE_URL } from '../../config/api';
+
 export class WhatsAppIntegrationService {
-  private static backendUrl = import.meta.env.VITE_BACKEND_API_URL || '/api/v1';
+  private static backendUrl = API_BASE_URL;
 
   /**
    * Tests real connection to WhatsApp Business API via backend proxy or Graph API

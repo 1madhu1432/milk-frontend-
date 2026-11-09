@@ -1,13 +1,8 @@
 import { RazorpayConfig, ConnectionTestResult } from '../../models/integrations';
 import { getAuthToken, getAuthHeaders } from '../api/apiClient';
+import { API_BASE_URL } from '../../config/api';
 
-const getBaseApiUrl = () => {
-  return (
-    (import.meta.env.VITE_BACKEND_API_URL as string) ||
-    (import.meta.env.VITE_API_BASE_URL as string) ||
-    (import.meta.env.PROD ? '/api/v1' : 'http://localhost:4000/api/v1')
-  );
-};
+const getBaseApiUrl = () => API_BASE_URL;
 
 export interface RazorpayOrderRequest {
   amount: number; // in INR rupees
@@ -48,7 +43,7 @@ export interface RazorpayVerificationResponse {
 }
 
 export class RazorpayIntegrationService {
-  private static backendUrl = import.meta.env.VITE_BACKEND_API_URL || '/api/v1';
+  private static backendUrl = API_BASE_URL;
 
   /**
    * Tests real connection to Razorpay via backend proxy.
